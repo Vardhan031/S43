@@ -217,22 +217,32 @@ export default function TournamentDetailsPage({
           </Link>
 
           <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-lg border border-orange-500/20 bg-orange-950/40 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#ff4e00]">
-                  {tournament.mode}
-                </span>
-
-                <span className="rounded-lg border border-slate-800 bg-slate-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  {getStatusLabel(
-                    tournament.status
-                  )}
-                </span>
+            <div className="flex items-center gap-4">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-neutral-900/60 border border-slate-800/80 flex items-center justify-center p-2 shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-50" />
+                <img
+                  src={tournament.mode === "VSA" ? "/S43_vsa.png" : "/S43_h2h.png"}
+                  alt={`${tournament.mode} Mode`}
+                  className="h-full w-full object-contain relative z-10"
+                />
               </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="rounded-lg border border-orange-500/20 bg-orange-950/40 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#ff4e00]">
+                    {tournament.mode}
+                  </span>
 
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-white font-kanit italic uppercase">
-                {tournament.name}
-              </h1>
+                  <span className="rounded-lg border border-slate-800 bg-slate-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    {getStatusLabel(
+                      tournament.status
+                    )}
+                  </span>
+                </div>
+
+                <h1 className="mt-3 text-3xl font-black tracking-tight text-white font-kanit italic uppercase">
+                  {tournament.name}
+                </h1>
+              </div>
             </div>
 
             {/* Stats */}
