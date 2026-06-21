@@ -46,14 +46,48 @@ router.post("/", auth, async (req, res) => {
 // List Tournaments
 router.get("/", async (req, res) => {
   try {
-    const tournaments =
-      await Tournament.find().sort({
-        createdAt: -1,
-      });
+    const tournaments = await Tournament.find().sort({
+      createdAt: -1,
+    });
+
+    // Optimize champion loading: if any completed tournament doesn't have the champion field populated, compute it and save it
+    const populatedTournaments = await Promise.all(
+      tournaments.map(async (t) => {
+        if (t.status === "COMPLETED" && !t.champion) {
+          try {
+            // Find the final match of the tournament
+            const finalMatch = await Match.findOne({
+              tournamentId: t._id,
+              isKnockout: true,
+              knockoutLabel: "FINAL",
+              status: "COMPLETED",
+            }).populate("winner");
+
+            let championName = "TBD";
+            if (finalMatch && finalMatch.winner) {
+              championName = finalMatch.winner.displayName;
+            } else {
+              // Fallback to highest standings player
+              const standingsService = require("../services/standingsService");
+              const groupStandings = await standingsService.calculateStandings(t._id);
+              if (groupStandings.length > 0 && groupStandings[0].standings.length > 0) {
+                championName = groupStandings[0].standings[0].displayName;
+              }
+            }
+
+            t.champion = championName;
+            await t.save();
+          } catch (e) {
+            console.error("Failed to compute champion for " + t._id, e);
+          }
+        }
+        return t;
+      })
+    );
 
     res.status(200).json({
       success: true,
-      data: tournaments,
+      data: populatedTournaments,
     });
   } catch (error) {
     res.status(500).json({

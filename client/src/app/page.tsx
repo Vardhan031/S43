@@ -5,33 +5,6 @@ import Link from "next/link";
 import { Tournament, tournamentService, matchService, standingsService } from "@/services/api";
 import { Trophy, Users, Zap, Calendar, Settings, Swords, Crosshair } from "lucide-react";
 
-function ChampionLabel({ tournamentId }: { tournamentId: string }) {
-  const [champion, setChampion] = useState<string>("TBD");
-  useEffect(() => {
-    async function fetchWinner() {
-      try {
-        const matches = await matchService.getByTournament(tournamentId);
-        const knockoutMatches = matches.filter((m) => m.isKnockout);
-        if (knockoutMatches.length > 0) {
-          knockoutMatches.sort((a, b) => b.roundNumber - a.roundNumber);
-          const finalMatch = knockoutMatches[0];
-          if (finalMatch.status === "COMPLETED" && finalMatch.winner) {
-            setChampion(finalMatch.winner.displayName);
-            return;
-          }
-        }
-        const standings = await standingsService.getByTournament(tournamentId);
-        if (standings.length > 0 && standings[0].standings.length > 0) {
-          setChampion(standings[0].standings[0].displayName);
-        }
-      } catch (e) {
-        console.error("Failed to load champion", e);
-      }
-    }
-    fetchWinner();
-  }, [tournamentId]);
-  return <>{champion}</>;
-}
 
 const staticParticles = [
   { size: 3, left: 12, top: 40, duration: 18, delay: -4, sway: 20 },
@@ -546,7 +519,7 @@ export default function Home() {
                         WebkitTextFillColor: "transparent",
                       }}
                     >
-                      <ChampionLabel tournamentId={t._id} />
+                      {t.champion || "TBD"}
                     </span>
                   </div>
                 </Link>

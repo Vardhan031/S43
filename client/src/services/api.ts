@@ -50,6 +50,8 @@ export interface Tournament {
 
   logoUrl?: string;
 
+  champion?: string;
+
   createdAt?: string;
 
   updatedAt?: string;

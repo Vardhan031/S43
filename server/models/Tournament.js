@@ -71,6 +71,11 @@ const tournamentSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    champion: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
   { timestamps: true }
 );
