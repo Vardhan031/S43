@@ -1,0 +1,407 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050505;
+  --foreground: #f8fafc;
+  --orange-primary: #ff6a00;
+  --orange-secondary: #ff8c1a;
+  --orange-deep: #e04800;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-kanit: var(--font-kanit);
+}
+
+html,
+body {
+  background: #050505 !important;
+  color: var(--foreground);
+
+  font-family:
+    var(--font-geist-sans),
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  min-height: 100vh;
+}
+
+/* ========================================
+   GEOMETRIC WIREFRAME PATTERN (SVG-based)
+   ======================================== */
+.geo-pattern {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='%23ff6a00' stroke-width='0.5'/%3E%3Cpath d='M30 10L50 30L30 50L10 30Z' fill='none' stroke='%23ff6a00' stroke-width='0.3'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+}
+
+/* Subtle grid overlay */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.02;
+  background-image:
+    linear-gradient(rgba(255, 106, 0, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 106, 0, 0.15) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ========================================
+   VIGNETTE EFFECT
+   ======================================== */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+/* ========================================
+   HERO AMBIENT GLOWS
+   ======================================== */
+.hero-glow-primary {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(255, 106, 0, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(40px);
+}
+
+.hero-glow-left {
+  position: absolute;
+  top: 40px;
+  left: -100px;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(255, 78, 0, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(60px);
+}
+
+.hero-glow-right {
+  position: absolute;
+  top: 100px;
+  right: -80px;
+  width: 500px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(255, 140, 26, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(50px);
+}
+
+/* Horizontal highlight band behind hero */
+.hero-band {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 200px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 106, 0, 0.03) 30%,
+    rgba(255, 106, 0, 0.05) 50%,
+    rgba(255, 106, 0, 0.03) 70%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* ========================================
+   LOGO EFFECTS
+   ======================================== */
+.logo-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-glow {
+  position: absolute;
+  inset: -30px;
+  background: radial-gradient(ellipse, rgba(255, 106, 0, 0.2) 0%, transparent 65%);
+  pointer-events: none;
+  filter: blur(25px);
+  animation: logoPulse 4s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.logo-rim {
+  position: relative;
+  border-radius: 12px;
+  filter: drop-shadow(0 0 30px rgba(255, 106, 0, 0.35))
+          drop-shadow(0 0 60px rgba(255, 106, 0, 0.15))
+          drop-shadow(0 8px 20px rgba(0, 0, 0, 0.8));
+}
+
+/* ========================================
+   HEADLINE GLOW
+   ======================================== */
+.headline-glow {
+  text-shadow:
+    0 0 40px rgba(255, 106, 0, 0.3),
+    0 0 80px rgba(255, 106, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
+   NAVIGATION PILL
+   ======================================== */
+.nav-pill {
+  background: rgba(10, 8, 6, 0.85);
+  border: 1px solid rgba(255, 106, 0, 0.15);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(255, 106, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.nav-tab-active {
+  background: linear-gradient(135deg, #ff4e00 0%, #ff8c00 50%, #ff6a00 100%);
+  box-shadow:
+    0 0 20px rgba(255, 106, 0, 0.4),
+    0 0 50px rgba(255, 106, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.nav-tab-inactive {
+  color: rgba(255, 255, 255, 0.35);
+  transition: all 0.3s ease;
+}
+
+.nav-tab-inactive:hover {
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 0 10px rgba(255, 106, 0, 0.2);
+}
+
+/* ========================================
+   SECTION DIVIDER GLOW
+   ======================================== */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 106, 0, 0.2) 20%,
+    rgba(255, 106, 0, 0.35) 50%,
+    rgba(255, 106, 0, 0.2) 80%,
+    transparent
+  );
+}
+
+/* ========================================
+   ESPORTS CARDS — PREMIUM GLASS PANELS
+   ======================================== */
+.esports-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(15, 11, 8, 0.95) 0%, rgba(8, 5, 3, 0.98) 100%);
+  border: 1px solid rgba(255, 106, 0, 0.12);
+  box-shadow:
+    0 0 45px rgba(255, 78, 0, 0.04),
+    0 8px 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.esports-card:hover {
+  border-color: rgba(255, 106, 0, 0.3);
+  box-shadow:
+    0 0 60px rgba(255, 78, 0, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transform: translateY(-3px);
+}
+
+/* Card top glow line */
+.esports-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 106, 0, 0.3), transparent);
+}
+
+/* Marble vein texture */
+.esports-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image:
+    linear-gradient(75deg, transparent 47%, #ff4e00 49%, #ff8c00 50%, transparent 53%),
+    linear-gradient(-35deg, transparent 48%, #ff8c00 49%, #ff4e00 51%, transparent 54%);
+  background-size: 280px 280px;
+  pointer-events: none;
+}
+
+/* ========================================
+   EMPTY STATE CARD
+   ======================================== */
+.empty-state-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(15, 11, 8, 0.9) 0%, rgba(8, 5, 3, 0.95) 100%);
+  border: 1px solid rgba(255, 106, 0, 0.15);
+  box-shadow:
+    0 0 60px rgba(255, 78, 0, 0.05),
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.empty-state-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 106, 0, 0.35), transparent);
+}
+
+/* ========================================
+   TROPHY ICON BOX
+   ======================================== */
+.trophy-box {
+  background: rgba(12, 8, 5, 0.9);
+  border: 2px solid rgba(255, 106, 0, 0.35);
+  box-shadow:
+    0 0 25px rgba(255, 106, 0, 0.12),
+    inset 0 0 15px rgba(255, 106, 0, 0.05);
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.esports-button {
+  border: 1px solid rgba(255, 106, 0, 0.3);
+  color: #0a0604;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff4e00 0%, #ff8c00 50%, #e03e00 100%);
+  box-shadow: 0 0 25px rgba(255, 78, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.esports-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 0 35px rgba(255, 78, 0, 0.4);
+}
+
+/* ========================================
+   TABS (legacy support)
+   ======================================== */
+.esports-tab {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  background: linear-gradient(135deg, #070505 0%, #020101 100%);
+  transition: all 0.25s ease;
+}
+
+.esports-tab:hover {
+  color: white;
+  border-color: rgba(255, 106, 0, 0.2);
+}
+
+.esports-tab-active {
+  border: 1px solid rgba(255, 106, 0, 0.3);
+  color: #0a0604;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff4e00 0%, #ff8c00 50%, #e03e00 100%);
+  box-shadow: 0 0 22px rgba(255, 78, 0, 0.2);
+}
+
+/* ========================================
+   ACCENT BORDER
+   ======================================== */
+.esports-accent {
+  position: relative;
+}
+
+.esports-accent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, #ff4e00, #ff8c00, transparent);
+  opacity: 0.95;
+}
+
+/* ========================================
+   WINNER
+   ======================================== */
+.esports-winner {
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.06);
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 78, 0, 0.3);
+  border-radius: 999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 78, 0, 0.5);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 106, 0, 0.3), 0 0 50px rgba(255, 106, 0, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(255, 106, 0, 0.5), 0 0 70px rgba(255, 106, 0, 0.15); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 3s ease-in-out infinite;
+}
