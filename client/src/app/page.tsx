@@ -92,6 +92,33 @@ export default function Home() {
     );
   }
 
+  if (error && tournaments.length === 0) {
+    return (
+      <div style={{ background: "#050505" }} className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-8 max-w-md">
+          <Trophy className="mx-auto h-12 w-12 text-red-500/50 mb-4 animate-pulse" />
+          <h3 className="font-kanit font-black italic text-2xl text-white uppercase tracking-wide">
+            Connection Problem
+          </h3>
+          <p className="mt-4 text-sm text-neutral-400 leading-relaxed">
+            {error}
+          </p>
+          <p className="mt-2 text-xs text-neutral-500 leading-relaxed">
+            The server may be waking up from sleep mode (Render free tier). Please try again.
+          </p>
+          <button
+            onClick={() => {
+              window.location.reload();
+            }}
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-orange-500 hover:bg-orange-600 px-5 py-2.5 text-sm font-black uppercase text-black transition-colors"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ background: "#050505" }} className="min-h-screen text-slate-100 font-sans selection:bg-orange-500 selection:text-black relative overflow-x-hidden">
 

@@ -24,6 +24,37 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add response interceptor to handle automatic retries for network errors/timeouts (e.g. Render server spin-up)
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const config = error.config;
+    if (!config) return Promise.reject(error);
+
+    // Track the number of retries
+    config.__retryCount = config.__retryCount || 0;
+
+    // Check if we should retry (max 3 retries, for network/timeout/server errors)
+    const isNetworkError = !error.response;
+    const isServerError = error.response && error.response.status >= 500;
+    const isTimeout = error.code === "ECONNABORTED" || error.message?.toLowerCase().includes("timeout");
+
+    if (config.__retryCount < 3 && (isNetworkError || isServerError || isTimeout)) {
+      config.__retryCount += 1;
+      
+      // Dynamic delay based on retry attempt: 1500ms, 3000ms, 5000ms
+      const backoffDelay = config.__retryCount === 1 ? 1500 : config.__retryCount === 2 ? 3000 : 5000;
+      
+      console.warn(`[API Connection Warning] ${error.message || "Network Timeout"}. Retrying (${config.__retryCount}/3) in ${backoffDelay}ms...`);
+      
+      await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+      return api(config);
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 /* =========================
    TYPES
 ========================= */

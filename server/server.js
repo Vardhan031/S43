@@ -119,19 +119,15 @@ const seedDefaultAdmin = async () => {
 };
 
 // Start Server
-connectDB()
-  .then(async () => {
-    await seedDefaultAdmin();
-    app.listen(PORT, () => {
-      console.log(
-        `Server running on port ${PORT}`
-      );
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  
+  // Connect to database in the background
+  connectDB()
+    .then(async () => {
+      await seedDefaultAdmin();
+    })
+    .catch((error) => {
+      console.error(`Failed to initialize database: ${error.message}`);
     });
-  })
-  .catch((error) => {
-    console.error(
-      `Failed to start server: ${error.message}`
-    );
-
-    process.exit(1);
-  });
+});
