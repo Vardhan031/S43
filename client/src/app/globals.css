@@ -405,3 +405,48 @@ body {
 .animate-glow-pulse {
   animation: glowPulse 3s ease-in-out infinite;
 }
+
+/* ========================================
+   PREMIUM LIGHTWEIGHT LOADING ANIMATIONS
+   ======================================== */
+@keyframes ringSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes ringSpinReverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes logoPulseScale {
+  0%, 100% { transform: scale(0.9); opacity: 0.55; filter: drop-shadow(0 0 10px rgba(255, 106, 0, 0.25)); }
+  50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 25px rgba(255, 106, 0, 0.65)); }
+}
+
+@keyframes textShimmer {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.loader-ring-outer {
+  border: 3px solid transparent;
+  border-top-color: #ff6a00;
+  border-bottom-color: #ff8c1a;
+  animation: ringSpin 2s linear infinite;
+}
+
+.loader-ring-inner {
+  border: 3px solid transparent;
+  border-left-color: #ff4e00;
+  border-right-color: #e04800;
+  animation: ringSpinReverse 1.5s linear infinite;
+}
+
+.loader-icon-pulse {
+  animation: logoPulseScale 2s ease-in-out infinite;
+}
+
+.loader-text-shimmer {
+  animation: textShimmer 1.8s ease-in-out infinite;
+}

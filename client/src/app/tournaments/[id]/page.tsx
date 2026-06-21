@@ -146,12 +146,18 @@ export default function TournamentDetailsPage({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="flex flex-col items-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
-
-          <p className="mt-4 text-xs font-bold uppercase tracking-wider text-neutral-500">
-            Loading Tournament...
+      <div className="flex min-h-screen items-center justify-center bg-black relative overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%)" }} />
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="relative flex items-center justify-center h-24 w-24 mb-6">
+            <div className="absolute inset-0 rounded-full loader-ring-outer" />
+            <div className="absolute h-20 w-20 rounded-full loader-ring-inner" />
+            <div className="absolute flex h-14 w-14 items-center justify-center rounded-xl bg-neutral-900 border border-orange-500/30 shadow-lg shadow-orange-500/10 loader-icon-pulse">
+              <Trophy className="h-7 w-7 text-orange-500" />
+            </div>
+          </div>
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-neutral-500 loader-text-shimmer">
+            Loading Tournament Details...
           </p>
         </div>
       </div>
