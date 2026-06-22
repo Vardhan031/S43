@@ -99,22 +99,31 @@ app.use(
 const seedDefaultAdmin = async () => {
   const User = require("./models/User");
   try {
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
-      console.log("No users found in database. Seeding default admin user...");
+    // Delete legacy default insecure admin if it exists
+    const legacyAdmin = await User.findOne({ username: "admin" });
+    if (legacyAdmin) {
+      console.log("Legacy default admin 'admin' found. Removing for security...");
+      await User.deleteOne({ username: "admin" });
+      console.log("Legacy 'admin' removed successfully.");
+    }
+
+    // Ensure the new secure admin exists
+    const secureAdminUsername = "notapro@s43.com";
+    const secureAdmin = await User.findOne({ username: secureAdminUsername });
+    if (!secureAdmin) {
+      console.log(`Seeding secure admin user (${secureAdminUsername})...`);
       await User.create({
-        username: "admin",
-        password: "admin123"
+        username: secureAdminUsername,
+        password: "Not@pros43"
       });
       console.log("-----------------------------------------");
-      console.log("DEFAULT ADMIN CREATED:");
-      console.log("Username: admin");
-      console.log("Password: admin123");
-      console.log("Please change this password or create a new admin as soon as possible!");
+      console.log("SECURE ADMIN CREATED:");
+      console.log(`Username: ${secureAdminUsername}`);
+      console.log("Password: Not@pros43");
       console.log("-----------------------------------------");
     }
   } catch (error) {
-    console.error(`Failed to seed default admin: ${error.message}`);
+    console.error(`Failed to seed/migrate default admin: ${error.message}`);
   }
 };
 
