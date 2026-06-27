@@ -1045,7 +1045,7 @@ export default function AdminDashboard() {
                                 placeholder="Paste player names (one per line)"
                                 value={bulkPlayersText}
                                 onChange={(e) => setBulkPlayersText(e.target.value)}
-                                className="w-full rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-200 focus:border-orange-400 focus:outline-none resize-none font-mono"
+                                className="w-full rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-200 focus:border-orange-400 focus:outline-none resize-y min-h-[72px] font-mono"
                               ></textarea>
                               <button
                                 type="submit"
