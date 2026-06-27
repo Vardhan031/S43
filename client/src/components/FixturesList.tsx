@@ -156,15 +156,15 @@ export default function FixturesList({
   return (
     <div className="space-y-8">
       {/* Filters */}
-      <div className="scrollbar-thin flex gap-3 overflow-x-auto pb-2">
+      <div className="flex flex-wrap gap-1.5 pb-2">
         <button
           onClick={() =>
             setActiveGroup("ALL")
           }
           className={`
-            whitespace-nowrap rounded-2xl
-            border px-5 py-2.5
-            text-xs font-black uppercase tracking-wider
+            whitespace-nowrap rounded-xl md:rounded-2xl
+            border px-3 md:px-5 py-1.5 md:py-2.5
+            text-[10px] md:text-xs font-black uppercase tracking-wider
             transition-all duration-300
             ${activeGroup === "ALL"
             ? `
@@ -199,9 +199,9 @@ export default function FixturesList({
                 )
               }
               className={`
-                whitespace-nowrap rounded-2xl
-                border px-5 py-2.5
-                text-xs font-black uppercase tracking-wider
+                whitespace-nowrap rounded-xl md:rounded-2xl
+                border px-3 md:px-5 py-1.5 md:py-2.5
+                text-[10px] md:text-xs font-black uppercase tracking-wider
                 transition-all duration-300
                 ${activeGroup ===
                   groupId

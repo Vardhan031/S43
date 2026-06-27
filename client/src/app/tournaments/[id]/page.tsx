@@ -282,7 +282,7 @@ export default function TournamentDetailsPage({
           </div>
 
           {/* Tabs */}
-          <div className="mt-8 flex gap-2 overflow-x-auto">
+          <div className="mt-8 grid grid-cols-3 gap-1.5 sm:flex sm:gap-2 w-full sm:w-auto">
             {[
               {
                 key: "standings",
@@ -315,7 +315,7 @@ export default function TournamentDetailsPage({
                       | "knockout"
                     )
                   }
-                  className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition ${activeTab === tab.key
+                  className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border px-2 sm:px-4 py-2 text-[11px] sm:text-sm font-black uppercase tracking-wider transition ${activeTab === tab.key
                     ? "border-orange-500 text-orange-400 bg-orange-950/20"
                     : "border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700 hover:text-white"
                     }`}
@@ -350,12 +350,12 @@ export default function TournamentDetailsPage({
               ) : (
                 <>
                   {/* Standings Group Selector for Mobile */}
-                  <div className="flex md:hidden overflow-x-auto gap-2 pb-3.5 scrollbar-thin">
+                  <div className="flex md:hidden flex-wrap gap-1.5 pb-2">
                     {standings.map((g) => (
                       <button
                         key={g.groupId}
                         onClick={() => setSelectedStandingsGroup(g.groupId)}
-                        className={`whitespace-nowrap px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition ${
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition ${
                           selectedStandingsGroup === g.groupId
                             ? "bg-gradient-to-r from-[#ff4e00] to-[#ff8c00] text-slate-950 font-black shadow-lg shadow-[0_0_15px_rgba(212,175,55,0.25)]"
                             : "border border-slate-800 bg-[#050505] text-slate-400 hover:text-white"
