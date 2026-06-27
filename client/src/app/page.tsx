@@ -414,45 +414,58 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 relative overflow-hidden animated-card-ongoing"
+                  className="group flex flex-col justify-between rounded-2xl p-8 relative overflow-hidden animated-card-ongoing min-h-[220px]"
                 >
-                  <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(to right, transparent, rgba(255,106,0,0.28), transparent)" }} />
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl overflow-hidden"
-                        style={t.logoUrl ? {} : { background: "rgba(12,8,5,0.9)", border: "2px solid rgba(255,106,0,0.35)", boxShadow: "0 0 24px rgba(255,106,0,0.1)" }}
-                      >
-                        {t.logoUrl ? (
-                          <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <Trophy className="h-9 w-9 text-orange-500" />
-                        )}
-                      </div>
-                      <div>
-                        <h4 className="font-kanit font-black italic text-base text-white uppercase tracking-wide truncate group-hover:text-orange-400 transition-colors">
-                          {t.name}
-                        </h4>
-                        <span className="mt-1 inline-flex items-center gap-1 rounded bg-orange-950/40 border border-orange-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-orange-400 uppercase">
+                  {/* Parallax Logo Background */}
+                  <div className="absolute top-0 right-0 bottom-0 w-[45%] pointer-events-none overflow-hidden select-none z-0">
+                    {/* Ambient Back Glow */}
+                    <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-[#ff6a00]/12 filter blur-2xl group-hover:bg-[#ff6a00]/22 transition-all duration-500" />
+                    
+                    {/* Parallax Logo Image */}
+                    <div 
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 opacity-20 group-hover:opacity-40 group-hover:scale-112 group-hover:-translate-x-2 group-hover:-translate-y-[45%] transition-all duration-500 ease-out"
+                    >
+                      {t.logoUrl ? (
+                        <img 
+                          src={t.logoUrl} 
+                          alt="" 
+                          className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,106,0,0.2)]" 
+                        />
+                      ) : (
+                        <Trophy className="w-full h-full text-[#ff6a00]/40 filter drop-shadow-[0_0_15px_rgba(255,106,0,0.1)]" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Main Content (z-10) */}
+                  <div className="relative z-10 flex-grow flex flex-col justify-between">
+                    <div>
+                      <div className="flex flex-col gap-2 max-w-[65%]">
+                        <span className="inline-flex w-fit items-center gap-1 rounded bg-orange-950/40 border border-orange-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-orange-400 uppercase">
                           <span className="h-1 w-1 rounded-full bg-orange-400 animate-pulse" />
                           {t.status === "DRAFT" ? "DRAFTING" : "LIVE"}
                         </span>
+                        <h4 className="font-kanit font-black italic text-lg sm:text-xl text-white uppercase tracking-wide leading-tight group-hover:text-orange-400 transition-colors break-words">
+                          {t.name}
+                        </h4>
+                      </div>
+
+                      <div className="mt-6 space-y-2.5 max-w-[65%]">
+                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-400">
+                          <Zap className="h-4 w-4 text-orange-500/60" />
+                          <span>{t.totalGroups > 1 ? `Two Stage ${t.mode}` : `${t.mode} Format`}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-400">
+                          <Users className="h-4 w-4 text-orange-500/60" />
+                          <span>{t.totalGroups > 1 ? `${t.totalGroups} Groups` : `${t.totalPlayers} Teams`}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="mt-8 space-y-3.5">
-                      <div className="flex items-center gap-3 text-sm font-semibold text-neutral-500">
-                        <Zap className="h-4.5 w-4.5 text-orange-500/60" />
-                        <span>{t.totalGroups > 1 ? `Two Stage ${t.mode}` : `${t.mode} Format`}</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm font-semibold text-neutral-500">
-                        <Users className="h-4.5 w-4.5 text-orange-500/60" />
-                        <span>{t.totalGroups > 1 ? `${t.totalGroups} Groups` : `${t.totalPlayers} Teams`}</span>
-                      </div>
+
+                    <div className="mt-8 pt-4 flex items-center justify-between text-xs font-black uppercase text-orange-500 group-hover:text-orange-400 transition-colors" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      <span>View Tournament</span>
+                      <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                     </div>
-                  </div>
-                  <div className="mt-8 pt-5 flex items-center justify-between text-sm font-black uppercase text-orange-500 group-hover:text-orange-400 transition-colors" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                    <span>View Tournament</span>
-                    <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                   </div>
                 </Link>
               ))}
@@ -506,57 +519,70 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 relative overflow-hidden animated-card-completed"
+                  className="group flex flex-col justify-between rounded-2xl p-8 relative overflow-hidden animated-card-completed min-h-[220px]"
                 >
-                  <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent)" }} />
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl overflow-hidden"
-                        style={t.logoUrl ? {} : { background: "rgba(12,8,5,0.9)", border: "2px solid rgba(255,106,0,0.22)" }}
-                      >
-                        {t.logoUrl ? (
-                          <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <Trophy className="h-9 w-9 text-orange-500/70" />
-                        )}
-                      </div>
-                      <div>
-                        <h4 className="font-kanit font-black italic text-base text-white uppercase tracking-wide truncate group-hover:text-orange-400 transition-colors">
-                          {t.name}
-                        </h4>
-                        <span className="mt-1 inline-block rounded bg-emerald-950/20 border border-emerald-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-emerald-400 uppercase">
-                          COMPLETED
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-8 space-y-3.5">
-                      <div className="flex items-center gap-3 text-sm font-semibold text-neutral-500">
-                        <Zap className="h-4.5 w-4.5 text-orange-500/50" />
-                        <span>{t.totalGroups > 1 ? `Two Stage ${t.mode}` : `${t.mode} Format`}</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm font-semibold text-neutral-500">
-                        <Users className="h-4.5 w-4.5 text-orange-500/50" />
-                        <span>{t.totalGroups > 1 ? `${t.totalGroups} Groups` : `${t.totalPlayers} Teams`}</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-sm font-semibold text-neutral-500">
-                        <Calendar className="h-4.5 w-4.5 text-orange-500/50" />
-                        <span>{formatDate(t.createdAt)}</span>
-                      </div>
+                  {/* Parallax Logo Background */}
+                  <div className="absolute top-0 right-0 bottom-0 w-[45%] pointer-events-none overflow-hidden select-none z-0">
+                    {/* Ambient Back Glow */}
+                    <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-white/5 filter blur-2xl group-hover:bg-white/10 transition-all duration-500" />
+                    
+                    {/* Parallax Logo Image */}
+                    <div 
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 opacity-15 group-hover:opacity-35 group-hover:scale-112 group-hover:-translate-x-2 group-hover:-translate-y-[45%] transition-all duration-500 ease-out"
+                    >
+                      {t.logoUrl ? (
+                        <img 
+                          src={t.logoUrl} 
+                          alt="" 
+                          className="w-full h-full object-contain filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+                        />
+                      ) : (
+                        <Trophy className="w-full h-full text-white/30" />
+                      )}
                     </div>
                   </div>
-                  <div className="mt-8 pt-5 flex items-center justify-between" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                    <span className="text-[10px] font-black tracking-wider text-neutral-600 uppercase">CHAMPION</span>
-                    <span
-                      className="text-sm font-black uppercase font-kanit italic"
-                      style={{
-                        background: "linear-gradient(135deg,#ff6a00,#ff8c1a)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                      }}
-                    >
-                      {t.champion || "TBD"}
-                    </span>
+
+                  {/* Main Content (z-10) */}
+                  <div className="relative z-10 flex-grow flex flex-col justify-between">
+                    <div>
+                      <div className="flex flex-col gap-2 max-w-[65%]">
+                        <span className="inline-flex w-fit items-center gap-1 rounded bg-emerald-950/20 border border-emerald-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-emerald-400 uppercase">
+                          COMPLETED
+                        </span>
+                        <h4 className="font-kanit font-black italic text-lg sm:text-xl text-white uppercase tracking-wide leading-tight group-hover:text-orange-400 transition-colors break-words">
+                          {t.name}
+                        </h4>
+                      </div>
+
+                      <div className="mt-6 space-y-2.5 max-w-[65%]">
+                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-500">
+                          <Zap className="h-4 w-4 text-orange-500/40" />
+                          <span>{t.totalGroups > 1 ? `Two Stage ${t.mode}` : `${t.mode} Format`}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-500">
+                          <Users className="h-4 w-4 text-orange-500/40" />
+                          <span>{t.totalGroups > 1 ? `${t.totalGroups} Groups` : `${t.totalPlayers} Teams`}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-500">
+                          <Calendar className="h-4 w-4 text-orange-500/40" />
+                          <span>{formatDate(t.createdAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 pt-4 flex items-center justify-between" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      <span className="text-[10px] font-black tracking-wider text-neutral-600 uppercase">CHAMPION</span>
+                      <span
+                        className="text-sm font-black uppercase font-kanit italic"
+                        style={{
+                          background: "linear-gradient(135deg,#ff6a00,#ff8c1a)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                        }}
+                      >
+                        {t.champion || "TBD"}
+                      </span>
+                    </div>
                   </div>
                 </Link>
               ))}
