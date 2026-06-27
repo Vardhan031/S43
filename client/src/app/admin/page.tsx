@@ -43,7 +43,8 @@ import StandingsTable from "@/components/StandingsTable";
 import KnockoutBracket from "@/components/KnockoutBracket";
 
 // Helper function to compress images client-side before upload to avoid payload too large (413) errors
-const compressImage = (file: File, maxWidth: number = 1000, maxHeight: number = 1000, quality: number = 0.85): Promise<string> => {
+// It also automatically detects and strips solid black backgrounds using a flood-fill algorithm
+const compressImage = (file: File, maxWidth: number = 1000, maxHeight: number = 1000): Promise<string> => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -76,9 +77,62 @@ const compressImage = (file: File, maxWidth: number = 1000, maxHeight: number = 
 
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Preserve transparency if the original file is a PNG
-        const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
-        const dataUrl = canvas.toDataURL(mimeType, mimeType === "image/jpeg" ? quality : undefined);
+        // Remove solid black background (if any) starting from the edges using Breadth-First Search (BFS)
+        try {
+          const imgData = ctx.getImageData(0, 0, width, height);
+          const data = imgData.data;
+          const threshold = 35; // Threshold for dark pixels (0-255)
+          const visited = new Uint8Array(width * height);
+          const queue: [number, number][] = [];
+
+          const getIdx = (x: number, y: number) => (y * width + x) * 4;
+
+          const isBlack = (x: number, y: number) => {
+            const idx = getIdx(x, y);
+            return data[idx] < threshold && data[idx + 1] < threshold && data[idx + 2] < threshold;
+          };
+
+          // Seed queue with border pixels
+          for (let x = 0; x < width; x++) {
+            if (isBlack(x, 0)) { visited[x] = 1; queue.push([x, 0]); }
+            if (isBlack(x, height - 1)) { visited[(height - 1) * width + x] = 1; queue.push([x, height - 1]); }
+          }
+          for (let y = 0; y < height; y++) {
+            if (isBlack(0, y)) { visited[y * width] = 1; queue.push([0, y]); }
+            if (isBlack(width - 1, y)) { visited[y * width + (width - 1)] = 1; queue.push([width - 1, y]); }
+          }
+
+          let head = 0;
+          while (head < queue.length) {
+            const [cx, cy] = queue[head++];
+            const idx = getIdx(cx, cy);
+            data[idx + 3] = 0; // Set alpha to 0 (transparent)
+
+            const neighbors = [
+              [cx + 1, cy],
+              [cx - 1, cy],
+              [cx, cy + 1],
+              [cx, cy - 1]
+            ];
+
+            for (const [nx, ny] of neighbors) {
+              if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                const nidx = ny * width + nx;
+                if (!visited[nidx] && isBlack(nx, ny)) {
+                  visited[nidx] = 1;
+                  queue.push([nx, ny]);
+                }
+              }
+            }
+          }
+
+          ctx.putImageData(imgData, 0, 0);
+        } catch (e) {
+          console.error("Failed to remove black background", e);
+        }
+
+        // Export as PNG to preserve transparent pixels
+        const dataUrl = canvas.toDataURL("image/png");
         resolve(dataUrl);
       };
       img.onerror = () => {
