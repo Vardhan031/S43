@@ -414,14 +414,18 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 pt-16 relative animated-card-ongoing min-h-[220px] mt-10 text-center"
+                  className="group flex flex-col justify-between rounded-2xl p-8 pt-20 relative animated-card-ongoing min-h-[220px] mt-12 text-center"
                 >
-                  {/* Floating Logo Badge overlapping the top edge (centered, half inside, half outside) */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 shrink-0 rounded-2xl bg-neutral-900 border-2 border-orange-500/35 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.5)] group-hover:border-orange-500/60 transition-all duration-300 z-20 overflow-hidden">
+                  {/* Floating Logo (centered, half inside, half outside, transparent background, larger size) */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24 shrink-0 flex items-center justify-center z-20 transition-transform duration-300 group-hover:scale-110 select-none pointer-events-none">
                     {t.logoUrl ? (
-                      <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover rounded-xl" />
+                      <img 
+                        src={t.logoUrl} 
+                        alt={t.name} 
+                        className="h-full w-full object-contain filter drop-shadow-[0_0_12px_rgba(255,106,0,0.25)] group-hover:drop-shadow-[0_0_20px_rgba(255,106,0,0.5)] transition-all duration-300" 
+                      />
                     ) : (
-                      <Trophy className="h-7 w-7 text-orange-500" />
+                      <Trophy className="h-12 w-12 text-orange-500 filter drop-shadow-[0_0_10px_rgba(255,106,0,0.3)]" />
                     )}
                   </div>
 
@@ -508,14 +512,18 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 pt-16 relative animated-card-completed min-h-[220px] mt-10 text-center"
+                  className="group flex flex-col justify-between rounded-2xl p-8 pt-20 relative animated-card-completed min-h-[220px] mt-12 text-center"
                 >
-                  {/* Floating Logo Badge overlapping the top edge (centered, half inside, half outside) */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 shrink-0 rounded-2xl bg-neutral-900 border-2 border-white/10 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.3)] group-hover:border-orange-500/40 transition-all duration-300 z-20 overflow-hidden">
+                  {/* Floating Logo (centered, half inside, half outside, transparent background, larger size) */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24 shrink-0 flex items-center justify-center z-20 transition-transform duration-300 group-hover:scale-110 select-none pointer-events-none">
                     {t.logoUrl ? (
-                      <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover rounded-xl grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300" />
+                      <img 
+                        src={t.logoUrl} 
+                        alt={t.name} 
+                        className="h-full w-full object-contain filter grayscale opacity-85 group-hover:grayscale-0 group-hover:opacity-100 drop-shadow-[0_0_12px_rgba(255,255,255,0.12)] group-hover:drop-shadow-[0_0_20px_rgba(255,106,0,0.4)] transition-all duration-300" 
+                      />
                     ) : (
-                      <Trophy className="h-7 w-7 text-white/40 group-hover:text-orange-500 transition-colors" />
+                      <Trophy className="h-12 w-12 text-white/40 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] group-hover:text-orange-500 transition-colors" />
                     )}
                   </div>
 

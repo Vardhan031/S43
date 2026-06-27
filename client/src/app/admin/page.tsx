@@ -43,7 +43,7 @@ import StandingsTable from "@/components/StandingsTable";
 import KnockoutBracket from "@/components/KnockoutBracket";
 
 // Helper function to compress images client-side before upload to avoid payload too large (413) errors
-const compressImage = (file: File, maxWidth: number = 600, maxHeight: number = 600, quality: number = 0.75): Promise<string> => {
+const compressImage = (file: File, maxWidth: number = 1000, maxHeight: number = 1000, quality: number = 0.85): Promise<string> => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -75,7 +75,10 @@ const compressImage = (file: File, maxWidth: number = 600, maxHeight: number = 6
         }
 
         ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        
+        // Preserve transparency if the original file is a PNG
+        const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
+        const dataUrl = canvas.toDataURL(mimeType, mimeType === "image/jpeg" ? quality : undefined);
         resolve(dataUrl);
       };
       img.onerror = () => {
