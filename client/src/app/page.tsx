@@ -414,10 +414,10 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 pt-14 relative animated-card-ongoing min-h-[220px] mt-8 text-center"
+                  className="group flex flex-col justify-between rounded-2xl p-8 pt-16 relative animated-card-ongoing min-h-[220px] mt-10 text-center"
                 >
                   {/* Floating Logo Badge overlapping the top edge (centered, half inside, half outside) */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 shrink-0 rounded-2xl bg-neutral-900 border-2 border-orange-500/35 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.5)] group-hover:border-orange-500/60 transition-all duration-300 z-20 overflow-hidden">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 shrink-0 rounded-2xl bg-neutral-900 border-2 border-orange-500/35 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.5)] group-hover:border-orange-500/60 transition-all duration-300 z-20 overflow-hidden">
                     {t.logoUrl ? (
                       <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover rounded-xl" />
                     ) : (
@@ -508,10 +508,10 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 pt-14 relative animated-card-completed min-h-[220px] mt-8 text-center"
+                  className="group flex flex-col justify-between rounded-2xl p-8 pt-16 relative animated-card-completed min-h-[220px] mt-10 text-center"
                 >
                   {/* Floating Logo Badge overlapping the top edge (centered, half inside, half outside) */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 shrink-0 rounded-2xl bg-neutral-900 border-2 border-white/10 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.3)] group-hover:border-orange-500/40 transition-all duration-300 z-20 overflow-hidden">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 shrink-0 rounded-2xl bg-neutral-900 border-2 border-white/10 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.3)] group-hover:border-orange-500/40 transition-all duration-300 z-20 overflow-hidden">
                     {t.logoUrl ? (
                       <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover rounded-xl grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300" />
                     ) : (
