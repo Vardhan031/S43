@@ -42,6 +42,54 @@ import GroupGrid from "@/components/GroupGrid";
 import StandingsTable from "@/components/StandingsTable";
 import KnockoutBracket from "@/components/KnockoutBracket";
 
+// Helper function to compress images client-side before upload to avoid payload too large (413) errors
+const compressImage = (file: File, maxWidth: number = 600, maxHeight: number = 600, quality: number = 0.75): Promise<string> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(event.target?.result as string);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => {
+        resolve(event.target?.result as string); // Fallback to original
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.onerror = () => {
+      resolve("");
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -838,14 +886,11 @@ export default function AdminDashboard() {
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => {
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setNewTourney({ ...newTourney, logoUrl: reader.result as string });
-                            };
-                            reader.readAsDataURL(file);
+                            const compressedBase64 = await compressImage(file);
+                            setNewTourney({ ...newTourney, logoUrl: compressedBase64 });
                           }
                         }}
                         className="hidden"
