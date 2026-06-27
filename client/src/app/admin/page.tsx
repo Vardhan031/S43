@@ -1226,19 +1226,23 @@ export default function AdminDashboard() {
                           <h3 className="text-xs font-black uppercase text-slate-400">
                             Current Group Standings Preview
                           </h3>
-                          <div className="grid gap-6 sm:grid-cols-2">
-                            {groups.map((group) => {
-                              const s = standings.find((sg) => sg.groupId === group._id);
-                              if (!s) return <GroupGrid key={group._id} groups={[group]} />;
-                              return (
-                                <StandingsTable
-                                  key={group._id}
-                                  group={s}
-                                  qualificationCount={selectedTournament.qualificationCount}
-                                />
-                              );
-                            })}
-                          </div>
+                          {standings.some((s) => groups.some((g) => g._id === s.groupId)) ? (
+                            <div className="grid gap-6 sm:grid-cols-2">
+                              {groups.map((group) => {
+                                const s = standings.find((sg) => sg.groupId === group._id);
+                                if (!s) return null;
+                                return (
+                                  <StandingsTable
+                                    key={group._id}
+                                    group={s}
+                                    qualificationCount={selectedTournament.qualificationCount}
+                                  />
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <GroupGrid groups={groups} />
+                          )}
                         </div>
                       )}
                     </div>
