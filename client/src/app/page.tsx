@@ -414,10 +414,10 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 pt-12 relative animated-card-ongoing min-h-[220px] mt-8"
+                  className="group flex flex-col justify-between rounded-2xl p-8 pt-14 relative animated-card-ongoing min-h-[220px] mt-8 text-center"
                 >
-                  {/* Floating Logo Badge overlapping the top edge */}
-                  <div className="absolute top-0 left-8 -translate-y-1/2 h-16 w-16 shrink-0 rounded-2xl bg-neutral-900 border-2 border-orange-500/35 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.5)] group-hover:border-orange-500/60 transition-all duration-300 z-20 overflow-hidden">
+                  {/* Floating Logo Badge overlapping the top edge (centered, half inside, half outside) */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 shrink-0 rounded-2xl bg-neutral-900 border-2 border-orange-500/35 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.5)] group-hover:border-orange-500/60 transition-all duration-300 z-20 overflow-hidden">
                     {t.logoUrl ? (
                       <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover rounded-xl" />
                     ) : (
@@ -429,31 +429,29 @@ export default function Home() {
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#ff6a00]/30 to-transparent z-10" />
 
                   {/* Content (z-10) */}
-                  <div className="relative z-10 flex-grow flex flex-col justify-between">
-                    <div>
-                      <div className="flex flex-col gap-2">
-                        <span className="inline-flex w-fit items-center gap-1 rounded bg-orange-950/40 border border-orange-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-orange-400 uppercase">
-                          <span className="h-1 w-1 rounded-full bg-orange-400 animate-pulse" />
-                          {t.status === "DRAFT" ? "DRAFTING" : "LIVE"}
-                        </span>
-                        <h4 className="font-kanit font-black italic text-lg sm:text-xl text-white uppercase tracking-wide leading-tight group-hover:text-orange-400 transition-colors break-words">
-                          {t.name}
-                        </h4>
-                      </div>
+                  <div className="relative z-10 flex-grow flex flex-col justify-between items-center w-full">
+                    <div className="flex flex-col items-center w-full">
+                      <span className="inline-flex w-fit items-center gap-1 rounded bg-orange-950/40 border border-orange-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-orange-400 uppercase mx-auto">
+                        <span className="h-1 w-1 rounded-full bg-orange-400 animate-pulse" />
+                        {t.status === "DRAFT" ? "DRAFTING" : "LIVE"}
+                      </span>
+                      <h4 className="mt-3 font-kanit font-black italic text-lg sm:text-xl text-white uppercase tracking-wide leading-tight group-hover:text-orange-400 transition-colors break-words w-full">
+                        {t.name}
+                      </h4>
 
-                      <div className="mt-6 space-y-2.5">
-                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-400">
+                      <div className="mt-5 flex flex-col items-center gap-2">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-400">
                           <Zap className="h-4 w-4 text-orange-500/60" />
                           <span>{t.totalGroups > 1 ? `Two Stage ${t.mode}` : `${t.mode} Format`}</span>
                         </div>
-                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-400">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-400">
                           <Users className="h-4 w-4 text-orange-500/60" />
                           <span>{t.totalGroups > 1 ? `${t.totalGroups} Groups` : `${t.totalPlayers} Teams`}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-8 pt-4 flex items-center justify-between text-xs font-black uppercase text-orange-500 group-hover:text-orange-400 transition-colors" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                    <div className="w-full mt-6 pt-4 flex items-center justify-center gap-2 text-xs font-black uppercase text-orange-500 group-hover:text-orange-400 transition-colors" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                       <span>View Tournament</span>
                       <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                     </div>
@@ -510,10 +508,10 @@ export default function Home() {
                 <Link
                   key={t._id}
                   href={`/tournaments/${t._id}`}
-                  className="group flex flex-col justify-between rounded-2xl p-8 pt-12 relative animated-card-completed min-h-[220px] mt-8"
+                  className="group flex flex-col justify-between rounded-2xl p-8 pt-14 relative animated-card-completed min-h-[220px] mt-8 text-center"
                 >
-                  {/* Floating Logo Badge overlapping the top edge */}
-                  <div className="absolute top-0 left-8 -translate-y-1/2 h-16 w-16 shrink-0 rounded-2xl bg-neutral-900 border-2 border-white/10 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.3)] group-hover:border-orange-500/40 transition-all duration-300 z-20 overflow-hidden">
+                  {/* Floating Logo Badge overlapping the top edge (centered, half inside, half outside) */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 shrink-0 rounded-2xl bg-neutral-900 border-2 border-white/10 flex items-center justify-center p-1.5 shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.3)] group-hover:border-orange-500/40 transition-all duration-300 z-20 overflow-hidden">
                     {t.logoUrl ? (
                       <img src={t.logoUrl} alt={t.name} className="h-full w-full object-cover rounded-xl grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300" />
                     ) : (
@@ -525,37 +523,35 @@ export default function Home() {
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent z-10" />
 
                   {/* Content (z-10) */}
-                  <div className="relative z-10 flex-grow flex flex-col justify-between">
-                    <div>
-                      <div className="flex flex-col gap-2">
-                        <span className="inline-flex w-fit items-center gap-1 rounded bg-emerald-950/20 border border-emerald-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-emerald-400 uppercase">
-                          COMPLETED
-                        </span>
-                        <h4 className="font-kanit font-black italic text-lg sm:text-xl text-white uppercase tracking-wide leading-tight group-hover:text-orange-400 transition-colors break-words">
-                          {t.name}
-                        </h4>
-                      </div>
+                  <div className="relative z-10 flex-grow flex flex-col justify-between items-center w-full">
+                    <div className="flex flex-col items-center w-full">
+                      <span className="inline-flex w-fit items-center gap-1 rounded bg-emerald-950/20 border border-emerald-500/20 px-2 py-0.5 text-[8px] font-black tracking-wider text-emerald-400 uppercase mx-auto">
+                        COMPLETED
+                      </span>
+                      <h4 className="mt-3 font-kanit font-black italic text-lg sm:text-xl text-white uppercase tracking-wide leading-tight group-hover:text-orange-400 transition-colors break-words w-full">
+                        {t.name}
+                      </h4>
 
-                      <div className="mt-6 space-y-2.5">
-                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-500">
+                      <div className="mt-5 flex flex-col items-center gap-2">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
                           <Zap className="h-4 w-4 text-orange-500/40" />
                           <span>{t.totalGroups > 1 ? `Two Stage ${t.mode}` : `${t.mode} Format`}</span>
                         </div>
-                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-500">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
                           <Users className="h-4 w-4 text-orange-500/40" />
                           <span>{t.totalGroups > 1 ? `${t.totalGroups} Groups` : `${t.totalPlayers} Teams`}</span>
                         </div>
-                        <div className="flex items-center gap-2.5 text-xs font-semibold text-neutral-500">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
                           <Calendar className="h-4 w-4 text-orange-500/40" />
                           <span>{formatDate(t.createdAt)}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-8 pt-4 flex items-center justify-between" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                      <span className="text-[10px] font-black tracking-wider text-neutral-600 uppercase">CHAMPION</span>
+                    <div className="w-full mt-6 pt-4 flex flex-col items-center justify-center gap-1" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      <span className="text-[9px] font-black tracking-[0.2em] text-neutral-600 uppercase">CHAMPION</span>
                       <span
-                        className="text-sm font-black uppercase font-kanit italic"
+                        className="text-base font-black uppercase font-kanit italic tracking-wide"
                         style={{
                           background: "linear-gradient(135deg,#ff6a00,#ff8c1a)",
                           WebkitBackgroundClip: "text",
