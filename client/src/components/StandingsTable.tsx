@@ -70,22 +70,17 @@ export default function StandingsTable({
       {/* Table */}
       <div className="relative z-10 overflow-hidden rounded-2xl border border-white/[0.04] bg-black/20">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left">
+          <table className="w-full min-w-0 text-left">
             <thead>
               <tr className="border-b border-white/5 text-[8px] uppercase tracking-[0.14em] text-zinc-500 md:text-[10px]">
-                <th className="w-[40px] px-1 py-3 text-center">#</th>
-
-                <th className="px-2 py-3 text-left">Player</th>
-
-                <th className="w-[38px] px-1 py-3 text-center">P</th>
-                <th className="w-[38px] px-1 py-3 text-center">W</th>
-                <th className="w-[38px] px-1 py-3 text-center">D</th>
-                <th className="w-[38px] px-1 py-3 text-center">L</th>
-                <th className="w-[42px] px-1 py-3 text-center">GF</th>
-                <th className="w-[42px] px-1 py-3 text-center">GA</th>
-                <th className="w-[42px] px-1 py-3 text-center">GD</th>
-
-                <th className="w-[50px] px-1 py-3 text-center text-[#ff8c00]">
+                <th className="w-[32px] md:w-[40px] px-0.5 md:px-1 py-2.5 md:py-3 text-center">#</th>
+                <th className="px-1.5 md:px-2 py-2.5 md:py-3 text-left min-w-[70px] md:min-w-[120px]">Player</th>
+                <th className="w-[28px] md:w-[38px] px-0.5 md:px-1 py-2.5 md:py-3 text-center">P</th>
+                <th className="w-[28px] md:w-[38px] px-0.5 md:px-1 py-2.5 md:py-3 text-center">W</th>
+                <th className="w-[28px] md:w-[38px] px-0.5 md:px-1 py-2.5 md:py-3 text-center">D</th>
+                <th className="w-[28px] md:w-[38px] px-0.5 md:px-1 py-2.5 md:py-3 text-center">L</th>
+                <th className="w-[34px] md:w-[42px] px-0.5 md:px-1 py-2.5 md:py-3 text-center">GD</th>
+                <th className="w-[40px] md:w-[50px] px-0.5 md:px-1 py-2.5 md:py-3 text-center text-[#ff8c00]">
                   PTS
                 </th>
               </tr>
@@ -114,11 +109,11 @@ export default function StandingsTable({
               `}
                   >
                     {/* Position */}
-                    <td className="px-1 py-3 text-center">
+                    <td className="px-0.5 md:px-1 py-2 md:py-3 text-center">
                       <div
                         className={`
-                    mx-auto grid h-7 w-7 place-items-center rounded-lg
-                    text-[11px] font-black transition-all duration-300
+                    mx-auto grid h-6 w-6 md:h-7 md:w-7 place-items-center rounded-lg
+                    text-[10px] md:text-[11px] font-black transition-all duration-300
                     ${isQualified
                             ? "border border-emerald-500/20 bg-emerald-500/15 text-emerald-400 shadow-[0_0_18px_rgba(16,185,129,0.18)]"
                             : "border border-white/[0.04] bg-white/[0.03] text-zinc-500"
@@ -130,14 +125,14 @@ export default function StandingsTable({
                     </td>
 
                     {/* Player */}
-                    <td className="min-w-0 px-2 py-3">
+                    <td className="min-w-0 px-1.5 md:px-2 py-2 md:py-3">
                       <div className="flex min-w-0 items-center gap-1.5">
-                        <span className="truncate text-[11px] font-semibold text-zinc-100 md:text-sm">
+                        <span className="truncate text-[10px] font-semibold text-zinc-100 md:text-sm">
                           {row.displayName}
                         </span>
 
                         {isQualified && (
-                          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-1 py-0.5 text-[7px] font-black uppercase tracking-wide text-emerald-400">
+                          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-1 py-0.5 text-[6px] font-black uppercase tracking-wide text-emerald-400">
                             Q
                           </span>
                         )}
@@ -145,32 +140,24 @@ export default function StandingsTable({
                     </td>
 
                     {/* Stats */}
-                    <td className="px-1 py-3 text-center text-[10px] text-zinc-400 md:text-xs">
+                    <td className="px-0.5 md:px-1 py-2 md:py-3 text-center text-[9px] text-zinc-400 md:text-xs">
                       {row.played}
                     </td>
 
-                    <td className="px-1 py-3 text-center text-[10px] font-semibold text-emerald-400 md:text-xs">
+                    <td className="px-0.5 md:px-1 py-2 md:py-3 text-center text-[9px] font-semibold text-emerald-400 md:text-xs">
                       {row.wins}
                     </td>
 
-                    <td className="px-1 py-3 text-center text-[10px] text-zinc-400 md:text-xs">
+                    <td className="px-0.5 md:px-1 py-2 md:py-3 text-center text-[9px] text-zinc-400 md:text-xs">
                       {row.draws}
                     </td>
 
-                    <td className="px-1 py-3 text-center text-[10px] font-semibold text-rose-400 md:text-xs">
+                    <td className="px-0.5 md:px-1 py-2 md:py-3 text-center text-[9px] font-semibold text-rose-400 md:text-xs">
                       {row.losses}
                     </td>
 
-                    <td className="px-1 py-3 text-center text-[10px] text-zinc-400 md:text-xs">
-                      {row.goalsFor}
-                    </td>
-
-                    <td className="px-1 py-3 text-center text-[10px] text-zinc-400 md:text-xs">
-                      {row.goalsAgainst}
-                    </td>
-
                     <td
-                      className={`px-1 py-3 text-center text-[10px] font-bold md:text-xs ${row.goalDifference > 0
+                      className={`px-0.5 md:px-1 py-2 md:py-3 text-center text-[9px] font-bold md:text-xs ${row.goalDifference > 0
                         ? "text-emerald-400"
                         : row.goalDifference < 0
                           ? "text-rose-400"
@@ -183,7 +170,7 @@ export default function StandingsTable({
                     </td>
 
                     {/* Points */}
-                    <td className="px-1 py-3 text-center text-sm font-black text-[#ff8c00] md:text-base">
+                    <td className="px-0.5 md:px-1 py-2 md:py-3 text-center text-xs font-black text-[#ff8c00] md:text-base">
                       {row.points}
                     </td>
                   </motion.tr>
