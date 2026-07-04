@@ -109,9 +109,10 @@ export default function TournamentDetailsPage({
           standingsData.status ===
           "fulfilled"
         ) {
-          setStandings(
-            standingsData.value
+          const sorted = [...standingsData.value].sort((a, b) =>
+            a.groupName.localeCompare(b.groupName)
           );
+          setStandings(sorted);
         }
 
         if (
@@ -335,6 +336,7 @@ export default function TournamentDetailsPage({
           "fixtures" && (
             <FixturesList
               matches={matches}
+              groups={standings}
             />
           )}
 

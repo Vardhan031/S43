@@ -288,7 +288,8 @@ export default function AdminDashboard() {
       let gData: Group[] = [];
       try {
         gData = await groupService.getByTournament(id);
-        setGroups(gData);
+        const sortedGroups = [...gData].sort((a, b) => a.groupName.localeCompare(b.groupName));
+        setGroups(sortedGroups);
       } catch (e) {
         setGroups([]);
       }
@@ -330,7 +331,8 @@ export default function AdminDashboard() {
       // Fetch standings
       try {
         const sData = await standingsService.getByTournament(id);
-        setStandings(sData);
+        const sortedStandings = [...sData].sort((a, b) => a.groupName.localeCompare(b.groupName));
+        setStandings(sortedStandings);
       } catch (e) {
         setStandings([]);
       }

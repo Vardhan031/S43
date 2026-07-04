@@ -1,6 +1,6 @@
 "use client";
 
-import type { Match } from "@/services/api";
+import type { Match, StandingGroup } from "@/services/api";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   useMemo,
@@ -9,6 +9,7 @@ import {
 
 interface FixturesListProps {
   matches: Match[];
+  groups?: StandingGroup[];
 }
 
 interface Matchup {
@@ -21,6 +22,7 @@ interface Matchup {
 
 export default function FixturesList({
   matches,
+  groups,
 }: FixturesListProps) {
   const [activeGroup, setActiveGroup] =
     useState<string | "ALL">(
@@ -45,22 +47,27 @@ export default function FixturesList({
       );
     }, [matches]);
 
-  // Unique Groups
-  const groups = useMemo(() => {
-    const groupIds =
-      new Set<string>(
-        groupMatches
-          .map((m) => m.groupId)
-          .filter(
-            (
-              id
-            ): id is string =>
-              Boolean(id)
-          )
-      );
+  // List of group IDs and names sorted alphabetically
+  const groupsList = useMemo(() => {
+    if (groups && groups.length > 0) {
+      return groups.map((g) => ({
+        id: g.groupId,
+        name: g.groupName,
+      }));
+    }
 
-    return Array.from(groupIds);
-  }, [groupMatches]);
+    // Fallback: extract unique groupIds from matches
+    const groupIds = new Set<string>();
+    groupMatches.forEach((m) => {
+      if (m.groupId) groupIds.add(m.groupId);
+    });
+
+    const sortedGroupIds = Array.from(groupIds).sort();
+    return sortedGroupIds.map((id, index) => ({
+      id,
+      name: `Group ${String.fromCharCode(65 + index)}`,
+    }));
+  }, [groupMatches, groups]);
 
   // Filtered Matches
   const filteredMatches =
@@ -143,6 +150,16 @@ export default function FixturesList({
     return map;
   }, [filteredMatches]);
 
+  // Sort the group keys based on the order in groupsList
+  const sortedGroupKeys = useMemo(() => {
+    const keys = Object.keys(matchupsByGroup);
+    return keys.sort((a, b) => {
+      const idxA = groupsList.findIndex((g) => g.id === a);
+      const idxB = groupsList.findIndex((g) => g.id === b);
+      return idxA - idxB;
+    });
+  }, [matchupsByGroup, groupsList]);
+
   if (groupMatches.length === 0) {
     return (
       <div className="esports-card rounded-3xl p-10 text-center">
@@ -189,13 +206,13 @@ export default function FixturesList({
           All Groups
         </button>
 
-        {groups.map(
-          (groupId, index) => (
+        {groupsList.map(
+          (group) => (
             <button
-              key={groupId}
+              key={group.id}
               onClick={() =>
                 setActiveGroup(
-                  groupId
+                  group.id
                 )
               }
               className={`
@@ -204,7 +221,7 @@ export default function FixturesList({
                 text-[10px] md:text-xs font-black uppercase tracking-wider
                 transition-all duration-300
                 ${activeGroup ===
-                  groupId
+                  group.id
                   ? `
                       border-orange-500/20
                       bg-gradient-to-r
@@ -224,10 +241,7 @@ export default function FixturesList({
                 }
               `}
             >
-              Group{" "}
-              {String.fromCharCode(
-                65 + index
-              )}
+              {group.name}
             </button>
           )
         )}
@@ -235,9 +249,7 @@ export default function FixturesList({
 
       {/* Fixtures */}
       <div className="space-y-10">
-        {Object.keys(
-          matchupsByGroup
-        ).map((groupKey, index) => {
+        {sortedGroupKeys.map((groupKey) => {
           const groupMatchups =
             matchupsByGroup[
             groupKey
@@ -248,6 +260,8 @@ export default function FixturesList({
             0
           );
 
+          const groupName = groupsList.find((g) => g.id === groupKey)?.name || `Group ${groupKey}`;
+
           return (
             <div
               key={groupKey}
@@ -256,10 +270,7 @@ export default function FixturesList({
               {/* Header */}
               <div className="flex items-center gap-3 border-b border-white/5 pb-3">
                 <h3 className="text-lg font-black uppercase tracking-wide text-[#ff8c00]">
-                  Group{" "}
-                  {String.fromCharCode(
-                    65 + index
-                  )}
+                  {groupName}
                 </h3>
 
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500">

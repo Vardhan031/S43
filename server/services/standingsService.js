@@ -7,7 +7,7 @@ const standingsService = {
   ) {
     const groups = await Group.find({
       tournamentId,
-    }).populate("participants");
+    }).sort({ groupName: 1 }).populate("participants");
 
     const results = [];
 

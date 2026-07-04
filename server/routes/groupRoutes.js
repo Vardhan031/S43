@@ -16,12 +16,11 @@ router.post("/generate", auth, async (req, res) => {
   }
 });
 
-// Get Groups by Tournament
 router.get("/tournament/:tournamentId", async (req, res) => {
   try {
-    const groups = await Group.find({ tournamentId: req.params.tournamentId }).populate(
-      "participants"
-    );
+    const groups = await Group.find({ tournamentId: req.params.tournamentId })
+      .sort({ groupName: 1 })
+      .populate("participants");
     res.status(200).json({ success: true, count: groups.length, data: groups });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
