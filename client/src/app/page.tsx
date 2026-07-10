@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Tournament, tournamentService, matchService, standingsService } from "@/services/api";
 import { Trophy, Users, Zap, Calendar, Settings, Swords, Crosshair } from "lucide-react";
 
@@ -279,9 +280,12 @@ export default function Home() {
                     }}
                   />
                   {/* VSA logo (pointing to h2h-logo.png artwork) */}
-                  <img
+                  <Image
                     src="/S43_vsa.png"
                     alt="VSA"
+                    fill
+                    sizes="300px"
+                    priority
                     className="absolute inset-0 w-full h-full object-contain transition-all duration-700"
                     style={{
                       opacity: activeTab === "VSA" ? 1 : 0,
@@ -290,9 +294,12 @@ export default function Home() {
                     }}
                   />
                   {/* H2H logo (pointing to vsa-logo.png artwork) */}
-                  <img
+                  <Image
                     src="/S43_h2h.png"
                     alt="H2H"
+                    fill
+                    sizes="300px"
+                    priority
                     className="absolute inset-0 w-full h-full object-contain transition-all duration-700"
                     style={{
                       opacity: activeTab === "H2H" ? 1 : 0,

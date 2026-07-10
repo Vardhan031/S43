@@ -9,6 +9,25 @@ const standingsService = {
       tournamentId,
     }).sort({ groupName: 1 }).populate("participants");
 
+    // Fetch all completed, non-knockout matches for this tournament in a single query
+    const allCompletedMatches = await Match.find({
+      tournamentId,
+      status: "COMPLETED",
+      isKnockout: false,
+    });
+
+    // Group matches by groupId for O(1) lookup
+    const matchesByGroup = new Map();
+    allCompletedMatches.forEach((match) => {
+      if (match.groupId) {
+        const gId = match.groupId.toString();
+        if (!matchesByGroup.has(gId)) {
+          matchesByGroup.set(gId, []);
+        }
+        matchesByGroup.get(gId).push(match);
+      }
+    });
+
     const results = [];
 
     for (const group of groups) {
@@ -42,15 +61,8 @@ const standingsService = {
         }
       );
 
-      // Completed matches
-      const completedMatches =
-        await Match.find({
-          tournamentId,
-          groupId: group._id,
-
-          status: "COMPLETED",
-          isKnockout: false,
-        });
+      // Get completed matches from in-memory map
+      const completedMatches = matchesByGroup.get(group._id.toString()) || [];
 
       completedMatches.forEach(
         (match) => {

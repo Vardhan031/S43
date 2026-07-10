@@ -182,6 +182,9 @@ export interface KnockoutRound {
    TOURNAMENTS
 ========================= */
 
+const tournamentCache = new Map<string, { data: Tournament; timestamp: number }>();
+const activeRequests = new Map<string, Promise<Tournament>>();
+
 export const tournamentService = {
   async getAll() {
     const { data } =
@@ -194,13 +197,32 @@ export const tournamentService = {
   },
 
   async getById(id: string) {
-    const { data } =
-      await api.get<{
+    // Check cache first (valid for 5 seconds)
+    const cached = tournamentCache.get(id);
+    if (cached && Date.now() - cached.timestamp < 5000) {
+      return cached.data;
+    }
+
+    // Deduplicate active request
+    let promise = activeRequests.get(id);
+    if (!promise) {
+      promise = api.get<{
         success: boolean;
         data: Tournament;
-      }>(`/tournaments/${id}`);
-
-    return data.data;
+      }>(`/tournaments/${id}`)
+        .then((res) => {
+          const data = res.data.data;
+          tournamentCache.set(id, { data, timestamp: Date.now() });
+          activeRequests.delete(id);
+          return data;
+        })
+        .catch((err) => {
+          activeRequests.delete(id);
+          throw err;
+        });
+      activeRequests.set(id, promise);
+    }
+    return promise;
   },
 
   async create(
