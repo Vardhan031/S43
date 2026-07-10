@@ -44,7 +44,7 @@ import KnockoutBracket from "@/components/KnockoutBracket";
 
 // Helper function to compress images client-side before upload to avoid payload too large (413) errors
 // It also automatically detects and strips solid black backgrounds using a flood-fill algorithm
-const compressImage = (file: File, maxWidth: number = 1000, maxHeight: number = 1000): Promise<string> => {
+const compressImage = (file: File, maxWidth: number = 200, maxHeight: number = 200): Promise<string> => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
