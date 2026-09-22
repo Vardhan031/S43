@@ -456,6 +456,10 @@ export const groupService = {
 
   async generate(tournamentId: string): Promise<Group[]> {
     const tournament = await tournamentService.getById(tournamentId);
+    if (tournament.status !== "DRAFT") {
+      throw new Error("Groups have already been generated for this tournament. Reset tournament to regenerate.");
+    }
+
     const participants = await participantService.getByTournament(tournamentId);
 
     if (participants.length < tournament.totalPlayers) {
@@ -479,13 +483,7 @@ export const groupService = {
         createdAt: new Date().toISOString()
       };
 
-      if (!isFirebaseConfigured || !db) {
-        const created: Group = { id: `group_${Date.now()}_${i}`, ...gData };
-        createdGroups.push(created);
-      } else {
-        const ref = await addDoc(collection(db, "groups"), gData);
-        createdGroups.push({ id: ref.id, ...gData });
-      }
+      createdGroups.push({ id: `group_${Date.now()}_${i}`, ...gData });
     }
 
     if (!isFirebaseConfigured || !db) {
@@ -495,10 +493,32 @@ export const groupService = {
       if (t) t.status = "GROUPS_GENERATED";
       saveLocalStore(store);
     } else {
-      await updateDoc(doc(db, "tournaments", tournamentId), {
-        status: "GROUPS_GENERATED",
-        updatedAt: new Date().toISOString()
-      });
+      try {
+        // Clean any existing group documents for this tournament
+        const existingSnap = await getDocs(query(collection(db, "groups"), where("tournamentId", "==", tournamentId)));
+        if (!existingSnap.empty) {
+          const batch = writeBatch(db);
+          existingSnap.docs.forEach((d) => batch.delete(d.ref));
+          await batch.commit();
+        }
+
+        const savedGroups: Group[] = [];
+        for (const g of createdGroups) {
+          const { id: _tempId, ...gData } = g;
+          const ref = await addDoc(collection(db, "groups"), gData);
+          savedGroups.push({ id: ref.id, ...gData });
+        }
+
+        await updateDoc(doc(db, "tournaments", tournamentId), {
+          status: "GROUPS_GENERATED",
+          updatedAt: new Date().toISOString()
+        });
+
+        return savedGroups;
+      } catch (err: any) {
+        console.error("[Firestore] groupService.generate failed:", err);
+        throw new Error(`Failed to generate groups: ${err?.code || err?.message || err}`);
+      }
     }
 
     return createdGroups;
@@ -566,6 +586,12 @@ export const matchService = {
   },
 
   async generateFixtures(tournamentId: string): Promise<Match[]> {
+    const tournament = await tournamentService.getById(tournamentId);
+    if (tournament.status !== "GROUPS_GENERATED") {
+      if (tournament.status === "DRAFT") throw new Error("Please generate groups before creating fixtures.");
+      throw new Error("Fixtures have already been generated for this tournament.");
+    }
+
     const groups = await groupService.getByTournament(tournamentId);
     if (groups.length === 0) throw new Error("No groups generated yet");
 
@@ -659,15 +685,29 @@ export const matchService = {
       return created;
     }
 
-    for (const mData of matchesToCreate) {
-      const ref = await addDoc(collection(db, "matches"), mData);
-      created.push({ id: ref.id, ...mData });
-    }
+    try {
+      // Delete any previous group stage matches for this tournament
+      const existingSnap = await getDocs(query(collection(db, "matches"), where("tournamentId", "==", tournamentId)));
+      const groupMatchDocs = existingSnap.docs.filter((d) => !d.data().isKnockout);
+      if (groupMatchDocs.length > 0) {
+        const batch = writeBatch(db);
+        groupMatchDocs.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+      }
 
-    await updateDoc(doc(db, "tournaments", tournamentId), {
-      status: "FIXTURES_ACTIVE",
-      updatedAt: new Date().toISOString()
-    });
+      for (const mData of matchesToCreate) {
+        const ref = await addDoc(collection(db, "matches"), mData);
+        created.push({ id: ref.id, ...mData });
+      }
+
+      await updateDoc(doc(db, "tournaments", tournamentId), {
+        status: "FIXTURES_ACTIVE",
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err: any) {
+      console.error("[Firestore] generateFixtures failed:", err);
+      throw new Error(`Failed to generate fixtures: ${err?.code || err?.message || err}`);
+    }
 
     return created;
   },
@@ -1040,15 +1080,31 @@ export const knockoutService = {
       return created;
     }
 
-    for (const mData of matchesToInsert) {
-      const ref = await addDoc(collection(db, "matches"), mData);
-      created.push({ id: ref.id, ...mData });
-    }
+    try {
+      // Delete any previous knockout matches for this tournament
+      const existingSnap = await getDocs(
+        query(collection(db, "matches"), where("tournamentId", "==", tournamentId))
+      );
+      const knockoutDocs = existingSnap.docs.filter((d) => d.data().isKnockout);
+      if (knockoutDocs.length > 0) {
+        const batch = writeBatch(db);
+        knockoutDocs.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+      }
 
-    await updateDoc(doc(db, "tournaments", tournamentId), {
-      status: "KNOCKOUTS_ACTIVE",
-      updatedAt: new Date().toISOString()
-    });
+      for (const mData of matchesToInsert) {
+        const ref = await addDoc(collection(db, "matches"), mData);
+        created.push({ id: ref.id, ...mData });
+      }
+
+      await updateDoc(doc(db, "tournaments", tournamentId), {
+        status: "KNOCKOUTS_ACTIVE",
+        updatedAt: new Date().toISOString()
+      });
+    } catch (err: any) {
+      console.error("[Firestore] generateBracket failed:", err);
+      throw new Error(`Failed to initialize knockouts: ${err?.code || err?.message || err}`);
+    }
 
     return created;
   }

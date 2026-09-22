@@ -972,41 +972,103 @@ export default function Admin() {
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <button
-                          type="button"
-                          onClick={handleGenerateGroups}
-                          disabled={actionLoading}
-                          className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-orange-500 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-4 text-center text-black font-black shadow-lg shadow-orange-500/20 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/20 mb-2">
-                            <Users className="h-5 w-5 text-black" />
+                        {/* 1. Generate Groups */}
+                        {selectedTournament.status !== "DRAFT" ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 text-center text-emerald-400 font-bold opacity-90 select-none">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 mb-2">
+                              <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">1. Groups Generated</span>
+                            <span className="text-[10px] text-emerald-500/80 mt-1 font-medium">Pools Drawn ✓</span>
                           </div>
-                          <span className="text-xs uppercase tracking-wide">1. Generate Groups</span>
-                        </button>
+                        ) : participants.length < selectedTournament.totalPlayers ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center text-neutral-500 font-bold opacity-60 select-none">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-800/40 mb-2">
+                              <Users className="h-5 w-5 text-neutral-500" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">1. Generate Groups</span>
+                            <span className="text-[10px] text-neutral-500 mt-1 font-medium">
+                              Need {selectedTournament.totalPlayers - participants.length} more player(s)
+                            </span>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleGenerateGroups}
+                            disabled={actionLoading}
+                            className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-orange-500 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-4 text-center text-black font-black shadow-lg shadow-orange-500/20 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+                          >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/20 mb-2">
+                              <Users className="h-5 w-5 text-black" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">1. Generate Groups</span>
+                            <span className="text-[10px] text-neutral-900/80 mt-1 font-bold">Draw {selectedTournament.totalGroups} Pool Groups</span>
+                          </button>
+                        )}
 
-                        <button
-                          type="button"
-                          onClick={handleGenerateFixtures}
-                          disabled={actionLoading}
-                          className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-orange-500 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-4 text-center text-black font-black shadow-lg shadow-orange-500/20 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/20 mb-2">
-                            <Zap className="h-5 w-5 text-black" />
+                        {/* 2. Generate Fixtures */}
+                        {selectedTournament.status === "FIXTURES_ACTIVE" || selectedTournament.status === "KNOCKOUTS_ACTIVE" || selectedTournament.status === "COMPLETED" ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 text-center text-emerald-400 font-bold opacity-90 select-none">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 mb-2">
+                              <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">2. Fixtures Active</span>
+                            <span className="text-[10px] text-emerald-500/80 mt-1 font-medium">Matches Scheduled ✓</span>
                           </div>
-                          <span className="text-xs uppercase tracking-wide">2. Generate Fixtures</span>
-                        </button>
+                        ) : selectedTournament.status !== "GROUPS_GENERATED" ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center text-neutral-500 font-bold opacity-60 select-none">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-800/40 mb-2">
+                              <Zap className="h-5 w-5 text-neutral-500" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">2. Generate Fixtures</span>
+                            <span className="text-[10px] text-neutral-500 mt-1 font-medium">Draw groups first</span>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleGenerateFixtures}
+                            disabled={actionLoading}
+                            className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-orange-500 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-4 text-center text-black font-black shadow-lg shadow-orange-500/20 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+                          >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/20 mb-2">
+                              <Zap className="h-5 w-5 text-black" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">2. Generate Fixtures</span>
+                            <span className="text-[10px] text-neutral-900/80 mt-1 font-bold">Create Round Robin</span>
+                          </button>
+                        )}
 
-                        <button
-                          type="button"
-                          onClick={handleGenerateKnockouts}
-                          disabled={actionLoading}
-                          className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-orange-500 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-4 text-center text-black font-black shadow-lg shadow-orange-500/20 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
-                        >
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/20 mb-2">
-                            <Trophy className="h-5 w-5 text-black" />
+                        {/* 3. Initialize Knockouts */}
+                        {selectedTournament.status === "KNOCKOUTS_ACTIVE" || selectedTournament.status === "COMPLETED" ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 text-center text-emerald-400 font-bold opacity-90 select-none">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 mb-2">
+                              <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">3. Knockouts Active</span>
+                            <span className="text-[10px] text-emerald-500/80 mt-1 font-medium">Brackets Live ✓</span>
                           </div>
-                          <span className="text-xs uppercase tracking-wide">3. Initialize Knockouts</span>
-                        </button>
+                        ) : selectedTournament.status !== "FIXTURES_ACTIVE" ? (
+                          <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 text-center text-neutral-500 font-bold opacity-60 select-none">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-800/40 mb-2">
+                              <Trophy className="h-5 w-5 text-neutral-500" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">3. Initialize Knockouts</span>
+                            <span className="text-[10px] text-neutral-500 mt-1 font-medium">Activate in fixtures stage</span>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleGenerateKnockouts}
+                            disabled={actionLoading}
+                            className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-orange-500 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 p-4 text-center text-black font-black shadow-lg shadow-orange-500/20 hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+                          >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/20 mb-2">
+                              <Trophy className="h-5 w-5 text-black" />
+                            </div>
+                            <span className="text-xs uppercase tracking-wide">3. Initialize Knockouts</span>
+                            <span className="text-[10px] text-neutral-900/80 mt-1 font-bold">Seed from Standings</span>
+                          </button>
+                        )}
                       </div>
                     </div>
 
