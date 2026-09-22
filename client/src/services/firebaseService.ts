@@ -282,8 +282,14 @@ export const tournamentService = {
         ];
         saveLocalStore(currentStore);
         return createdRemotely;
-      } catch (err) {
-        console.warn("[Firestore] Remote save failed, preserved in local storage:", err);
+      } catch (err: any) {
+        console.error("[Firestore] Remote save failed:", err);
+        // Remove the locally saved temp entry so the UI doesn't show a ghost tournament
+        const rollback = getLocalStore();
+        rollback.tournaments = rollback.tournaments.filter((t) => t.id !== tempId);
+        saveLocalStore(rollback);
+        // Re-throw so the admin sees the actual error via the alert system
+        throw new Error(`Failed to save tournament: ${err?.code || err?.message || err}`);
       }
     }
 
