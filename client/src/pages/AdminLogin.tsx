@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authService } from "../services/firebaseService";
+import { useAlert } from "../context/AlertContext";
 import { Trophy, Lock, User as UserIcon, ArrowLeft } from "lucide-react";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const { success: alertSuccess, error: alertError } = useAlert();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,10 +21,13 @@ export default function AdminLogin() {
       const email = username.includes("@") ? username : `${username}@s43.com`;
       await authService.login(email, password);
       localStorage.setItem("admin_authenticated", "true");
+      alertSuccess("Admin gateway unlocked.", "Access Granted");
       navigate("/admin");
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Invalid credentials. Access denied.");
+      const msg = err.message || "Invalid credentials. Access denied.";
+      setError(msg);
+      alertError(msg, "Authentication Failed");
     } finally {
       setLoading(false);
     }

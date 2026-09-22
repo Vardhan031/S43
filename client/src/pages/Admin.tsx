@@ -12,6 +12,7 @@ import {
   compressImage
 } from "../services/firebaseService";
 import CustomDropdown from "../components/CustomDropdown";
+import { useAlert } from "../context/AlertContext";
 
 import {
   Trophy,
@@ -179,6 +180,7 @@ function MatchScoreCard({ match, onUpdateScore, onResetScore }: MatchScoreCardPr
 
 export default function Admin() {
   const navigate = useNavigate();
+  const { success: alertSuccess, error: alertError, showConfirm } = useAlert();
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
 
@@ -188,7 +190,6 @@ export default function Admin() {
 
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   // Active tab state: roster | brackets | scores
   const [activeTab, setActiveTab] = useState<"roster" | "brackets" | "scores">("roster");
@@ -288,9 +289,9 @@ export default function Admin() {
         try {
           await tournamentService.update(selectedTournament.id, { logoUrl: dataUrl });
           await refreshTournamentData(selectedTournament.id);
-          setMessage({ text: "Tournament logo updated successfully!", type: "success" });
+          alertSuccess("Tournament logo updated successfully!");
         } catch (err: any) {
-          setMessage({ text: err.message, type: "error" });
+          alertError(err.message);
         } finally {
           setActionLoading(false);
         }
@@ -309,7 +310,7 @@ export default function Admin() {
       };
       const created = await tournamentService.create(payload);
       setSelectedTournament(created);
-      setMessage({ text: "Tournament created successfully!", type: "success" });
+      alertSuccess("Tournament created successfully!");
       setNewTourney({
         name: "",
         mode: "H2H",
@@ -319,7 +320,7 @@ export default function Admin() {
         logoUrl: ""
       });
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     } finally {
       setActionLoading(false);
     }
@@ -334,9 +335,9 @@ export default function Admin() {
       setNewPlayerName("");
       const updated = await participantService.getByTournament(selectedTournament.id);
       setParticipants(updated);
-      setMessage({ text: "Player added!", type: "success" });
+      alertSuccess("Player added!");
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     } finally {
       setActionLoading(false);
     }
@@ -352,9 +353,9 @@ export default function Admin() {
       setBulkPlayerNames("");
       const updated = await participantService.getByTournament(selectedTournament.id);
       setParticipants(updated);
-      setMessage({ text: `Added ${names.length} players!`, type: "success" });
+      alertSuccess(`Added ${names.length} players!`);
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     } finally {
       setActionLoading(false);
     }
@@ -367,7 +368,7 @@ export default function Admin() {
       const updated = await participantService.getByTournament(selectedTournament.id);
       setParticipants(updated);
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     }
   };
 
@@ -393,9 +394,9 @@ export default function Admin() {
     try {
       await groupService.generate(selectedTournament.id);
       await refreshTournamentData(selectedTournament.id);
-      setMessage({ text: "Groups generated successfully!", type: "success" });
+      alertSuccess("Groups generated successfully!");
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     } finally {
       setActionLoading(false);
     }
@@ -407,9 +408,9 @@ export default function Admin() {
     try {
       await matchService.generateFixtures(selectedTournament.id);
       await refreshTournamentData(selectedTournament.id);
-      setMessage({ text: "Fixtures generated successfully!", type: "success" });
+      alertSuccess("Fixtures generated successfully!");
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     } finally {
       setActionLoading(false);
     }
@@ -421,40 +422,56 @@ export default function Admin() {
     try {
       await knockoutService.generateBracket(selectedTournament.id);
       await refreshTournamentData(selectedTournament.id);
-      setMessage({ text: "Knockout stage initialized!", type: "success" });
+      alertSuccess("Knockout stage initialized!");
     } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
+      alertError(err.message);
     } finally {
       setActionLoading(false);
     }
   };
 
-  const handleResetTournament = async () => {
-    if (!selectedTournament || !window.confirm("Reset this tournament? All groups and matches will be wiped.")) return;
-    setActionLoading(true);
-    try {
-      await tournamentService.reset(selectedTournament.id);
-      await refreshTournamentData(selectedTournament.id);
-      setMessage({ text: "Tournament reset to Draft state.", type: "success" });
-    } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
-    } finally {
-      setActionLoading(false);
-    }
+  const handleResetTournament = () => {
+    if (!selectedTournament) return;
+    showConfirm({
+      title: "Reset Tournament",
+      message: "Reset this tournament? All groups and matches will be wiped. This cannot be undone.",
+      type: "warning",
+      confirmText: "Reset",
+      onConfirm: async () => {
+        setActionLoading(true);
+        try {
+          await tournamentService.reset(selectedTournament.id);
+          await refreshTournamentData(selectedTournament.id);
+          alertSuccess("Tournament reset to Draft state.");
+        } catch (err: any) {
+          alertError(err.message);
+        } finally {
+          setActionLoading(false);
+        }
+      }
+    });
   };
 
-  const handleDeleteTournament = async () => {
-    if (!selectedTournament || !window.confirm("Permanently delete this tournament? This cannot be undone.")) return;
-    setActionLoading(true);
-    try {
-      await tournamentService.delete(selectedTournament.id);
-      setSelectedTournament(null);
-      setMessage({ text: "Tournament deleted.", type: "success" });
-    } catch (err: any) {
-      setMessage({ text: err.message, type: "error" });
-    } finally {
-      setActionLoading(false);
-    }
+  const handleDeleteTournament = () => {
+    if (!selectedTournament) return;
+    showConfirm({
+      title: "Delete Tournament",
+      message: "Permanently delete this tournament? All data will be lost. This cannot be undone.",
+      type: "danger",
+      confirmText: "Delete",
+      onConfirm: async () => {
+        setActionLoading(true);
+        try {
+          await tournamentService.delete(selectedTournament.id);
+          setSelectedTournament(null);
+          alertSuccess("Tournament deleted.");
+        } catch (err: any) {
+          alertError(err.message);
+        } finally {
+          setActionLoading(false);
+        }
+      }
+    });
   };
 
   if (loading) {
@@ -581,18 +598,6 @@ export default function Admin() {
 
       {/* Main Content Area */}
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        {message && (
-          <div
-            className={`mb-6 rounded-xl border p-4 text-center text-xs font-bold uppercase tracking-wider ${
-              message.type === "success"
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                : "border-red-500/30 bg-red-500/10 text-red-400"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Left Column: Create Tournament Form */}
           <div className="lg:col-span-4">
