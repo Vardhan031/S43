@@ -442,10 +442,14 @@ export const groupService = {
       return getLocalStore().groups.filter((g) => g.tournamentId === tournamentId);
     }
     try {
-      const q = query(collection(db, "groups"), where("tournamentId", "==", tournamentId), orderBy("groupName", "asc"));
+      // No orderBy here — combining where() + orderBy() on different fields requires
+      // a Firestore composite index. Sort by groupName in JS instead (free, no index needed).
+      const q = query(collection(db, "groups"), where("tournamentId", "==", tournamentId));
       const snapshot = await getDocs(q);
-      return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Group));
-    } catch (e) {
+      const groups = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Group));
+      return groups.sort((a, b) => a.groupName.localeCompare(b.groupName));
+    } catch (e: any) {
+      console.error("[Firestore] groupService.getByTournament failed:", e?.code, e?.message);
       return getLocalStore().groups.filter((g) => g.tournamentId === tournamentId);
     }
   },
