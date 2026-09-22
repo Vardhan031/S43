@@ -25,7 +25,7 @@ export default function KnockoutBracket({
   }
 
   return (
-    <div className="scrollbar-thin overflow-x-auto pb-6">
+    <div className="overflow-x-auto no-scrollbar pb-6">
       <div className="flex min-w-max items-stretch gap-10 px-4 py-4">
         {rounds.map(
           (round, roundIndex) => {
@@ -38,7 +38,7 @@ export default function KnockoutBracket({
 
             return (
               <div
-                key={round._id}
+                key={round._id || round.id || `round-${roundIndex}`}
                 className="flex w-80 shrink-0 flex-col"
               >
                 {/* Header */}
@@ -69,7 +69,7 @@ export default function KnockoutBracket({
                   className={`flex flex-1 flex-col justify-around ${spacingClass}`}
                 >
                   {round.matches.map(
-                    (m) => {
+                    (m, matchIdx) => {
                       const complete =
                         m.status ===
                         "COMPLETED";
@@ -90,7 +90,7 @@ export default function KnockoutBracket({
 
                       return (
                         <div
-                          key={m._id}
+                          key={m._id || m.id || `m-${roundIndex}-${matchIdx}-${m.knockoutLabel}`}
                           className="
                             relative overflow-hidden rounded-3xl
                             border border-white/5
@@ -158,10 +158,7 @@ export default function KnockoutBracket({
                                   )}
 
                                   <span className="truncate text-sm font-bold">
-                                    {m
-                                      .participant1
-                                      ?.displayName ||
-                                      "TBD"}
+                                    {m.participant1?.displayName || m.participant1Name || "TBD"}
                                   </span>
                                 </div>
 
@@ -202,10 +199,7 @@ export default function KnockoutBracket({
                                   )}
 
                                   <span className="truncate text-sm font-bold">
-                                    {m
-                                      .participant2
-                                      ?.displayName ||
-                                      "TBD"}
+                                    {m.participant2?.displayName || m.participant2Name || "TBD"}
                                   </span>
                                 </div>
 

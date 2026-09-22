@@ -3,9 +3,12 @@ node_modules/
 client/node_modules/
 server/node_modules/
 
-# Next.js build output
+# Build output
 client/.next/
 client/out/
+dist/
+client/dist/
+build/
 
 # Environment files
 .env

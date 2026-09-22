@@ -21,11 +21,11 @@ export default function StandingsTable({
       transition={{ duration: 0.3 }}
       className="
         relative overflow-hidden rounded-3xl
-        border border-white/10
-        bg-gradient-to-b from-[#060404] to-[#000000]
+        border border-[#ffd700]/20 hover:border-[#ffd700]/40
+        bg-gradient-to-b from-[#0a0d16]/90 via-[#070911]/92 to-[#04060b]/95
         p-4 md:p-5
-        shadow-[0_0_60px_rgba(212,175,55,0.08)]
-        backdrop-blur-2xl
+        shadow-[0_15px_45px_rgba(0,0,0,0.85)]
+        backdrop-blur-xl
       "
     >
       {/* Ambient Glow */}
@@ -92,21 +92,17 @@ export default function StandingsTable({
                   row.position <= qualificationCount;
 
                 return (
-                  <motion.tr
+                  <tr
                     key={row.participantId}
-                    whileHover={{
-                      backgroundColor:
-                        "rgba(255,255,255,0.02)",
-                    }}
-                    transition={{ duration: 0.2 }}
                     className={`
-                border-b border-white/[0.03]
-                transition-all duration-300
-                ${isQualified
+                      border-b border-white/[0.03]
+                      hover:bg-white/[0.04]
+                      transition-all duration-200
+                      ${isQualified
                         ? "bg-emerald-500/[0.03] border-l-2 border-l-emerald-400"
                         : "bg-transparent"
                       }
-              `}
+                    `}
                   >
                     {/* Position */}
                     <td className="px-0.5 md:px-1 py-2 md:py-3 text-center">
@@ -173,7 +169,7 @@ export default function StandingsTable({
                     <td className="px-0.5 md:px-1 py-2 md:py-3 text-center text-xs font-black text-[#ff8c00] md:text-base">
                       {row.points}
                     </td>
-                  </motion.tr>
+                  </tr>
                 );
               })}
             </tbody>
