@@ -443,6 +443,9 @@ export default function Admin() {
       const updatedT = allTourneys.find((t) => t.id === tId);
       if (updatedT) setSelectedTournament(updatedT);
 
+      const pList = await participantService.getByTournament(tId);
+      setParticipants(pList);
+
       const mList = await matchService.getByTournament(tId);
       setMatches(mList);
       const sList = await standingsService.calculateStandings(tId);

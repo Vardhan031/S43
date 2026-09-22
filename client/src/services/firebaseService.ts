@@ -123,35 +123,20 @@ export function compressImage(dataUrl: string, maxWidth = 300, maxHeight = 300):
    ========================================================================== */
 export const tournamentService = {
   async getAll(): Promise<Tournament[]> {
-    const localTourneys = getLocalStore().tournaments;
     if (!isFirebaseConfigured || !db) {
-      return localTourneys;
+      return getLocalStore().tournaments;
     }
     try {
       const q = query(collection(db, "tournaments"), orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
-      const remoteTourneys = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Tournament));
-
-      const map = new Map<string, Tournament>();
-      [...remoteTourneys, ...localTourneys].forEach((t) => {
-        if (!map.has(t.id)) map.set(t.id, t);
-      });
-      return Array.from(map.values());
-    } catch (e) {
-      return localTourneys;
+      return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Tournament));
+    } catch (e: any) {
+      console.error("[Firestore] tournamentService.getAll failed:", e);
+      return getLocalStore().tournaments;
     }
   },
 
   subscribeAll(callback: (tournaments: Tournament[]) => void) {
-    const emitMerged = (remoteData: Tournament[]) => {
-      const localData = getLocalStore().tournaments;
-      const map = new Map<string, Tournament>();
-      [...remoteData, ...localData].forEach((t) => {
-        if (!map.has(t.id)) map.set(t.id, t);
-      });
-      callback(Array.from(map.values()));
-    };
-
     if (!isFirebaseConfigured || !db) {
       const handler = () => callback(getLocalStore().tournaments);
       handler();
@@ -170,10 +155,10 @@ export const tournamentService = {
         q,
         (snapshot) => {
           const remoteData = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Tournament));
-          emitMerged(remoteData);
+          callback(remoteData);
         },
         (err) => {
-          console.warn("[Firestore] Falling back to local store:", err.message);
+          console.error("[Firestore] tournamentService.subscribeAll snapshot error:", err.message);
           callback(getLocalStore().tournaments);
         }
       );
@@ -184,8 +169,8 @@ export const tournamentService = {
   },
 
   async getById(id: string): Promise<Tournament> {
-    const localT = getLocalStore().tournaments.find((t) => t.id === id);
     if (!isFirebaseConfigured || !db) {
+      const localT = getLocalStore().tournaments.find((t) => t.id === id);
       if (!localT) throw new Error("Tournament not found");
       return localT;
     }
@@ -193,28 +178,24 @@ export const tournamentService = {
       const docRef = doc(db, "tournaments", id);
       const snap = await getDoc(docRef);
       if (snap.exists()) {
-        const remoteT = { id: snap.id, ...snap.data() } as Tournament;
-        const store = getLocalStore();
-        if (!store.tournaments.some((t) => t.id === remoteT.id)) {
-          store.tournaments.push(remoteT);
-          saveLocalStore(store);
-        }
-        return remoteT;
+        return { id: snap.id, ...snap.data() } as Tournament;
       }
-      if (localT) return localT;
       throw new Error("Tournament not found");
     } catch (e) {
+      const localT = getLocalStore().tournaments.find((t) => t.id === id);
       if (localT) return localT;
       throw new Error("Tournament not found");
     }
   },
 
   subscribeById(id: string, callback: (tournament: Tournament | null) => void) {
-    const getLocal = () => getLocalStore().tournaments.find((t) => t.id === id) || null;
-
     if (!isFirebaseConfigured || !db) {
-      callback(getLocal());
-      const handler = () => callback(getLocal());
+      const localT = getLocalStore().tournaments.find((t) => t.id === id) || null;
+      callback(localT);
+      const handler = () => {
+        const t = getLocalStore().tournaments.find((x) => x.id === id) || null;
+        callback(t);
+      };
       if (typeof window !== "undefined") {
         window.addEventListener("localstore_updated", handler);
       }
@@ -230,18 +211,20 @@ export const tournamentService = {
         docRef,
         (snap) => {
           if (snap.exists()) {
-            const remoteT = { id: snap.id, ...snap.data() } as Tournament;
-            callback(remoteT);
+            callback({ id: snap.id, ...snap.data() } as Tournament);
           } else {
-            callback(getLocal());
+            callback(null);
           }
         },
         (err) => {
-          callback(getLocal());
+          console.error("[Firestore] subscribeById error:", err);
+          const localT = getLocalStore().tournaments.find((t) => t.id === id) || null;
+          callback(localT);
         }
       );
     } catch (e) {
-      callback(getLocal());
+      const localT = getLocalStore().tournaments.find((t) => t.id === id) || null;
+      callback(localT);
       return () => {};
     }
   },
@@ -319,8 +302,9 @@ export const tournamentService = {
         const tRef = doc(db, "tournaments", id);
         batch.update(tRef, { status: "DRAFT", champion: "", updatedAt: new Date().toISOString() });
         await batch.commit();
-      } catch (e) {
-        console.warn("[Firestore] Remote reset failed:", e);
+      } catch (e: any) {
+        console.error("[Firestore] Remote reset failed:", e);
+        throw new Error(`Failed to reset tournament: ${e?.code || e?.message || e}`);
       }
     }
   },
@@ -347,8 +331,9 @@ export const tournamentService = {
 
         batch.delete(doc(db, "tournaments", id));
         await batch.commit();
-      } catch (err) {
-        console.warn("[Firestore] Remote delete failed:", err);
+      } catch (err: any) {
+        console.error("[Firestore] Remote delete failed:", err);
+        throw new Error(`Failed to delete tournament: ${err?.code || err?.message || err}`);
       }
     }
   },
@@ -504,7 +489,12 @@ export const participantService = {
 export const groupService = {
   async getByTournament(tournamentId: string): Promise<Group[]> {
     if (!isFirebaseConfigured || !db) {
-      return getLocalStore().groups.filter((g) => g.tournamentId === tournamentId);
+      const localGroups = getLocalStore().groups.filter((g) => g.tournamentId === tournamentId);
+      const uniqueLocal = new Map<string, Group>();
+      for (const g of localGroups) {
+        if (!uniqueLocal.has(g.groupName)) uniqueLocal.set(g.groupName, g);
+      }
+      return Array.from(uniqueLocal.values()).sort((a, b) => a.groupName.localeCompare(b.groupName));
     }
     try {
       // No orderBy here — combining where() + orderBy() on different fields requires
@@ -512,7 +502,15 @@ export const groupService = {
       const q = query(collection(db, "groups"), where("tournamentId", "==", tournamentId));
       const snapshot = await getDocs(q);
       const groups = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Group));
-      return groups.sort((a, b) => a.groupName.localeCompare(b.groupName));
+      
+      // Deduplicate in case multiple duplicate runs were created
+      const uniqueByName = new Map<string, Group>();
+      for (const g of groups) {
+        if (!uniqueByName.has(g.groupName)) {
+          uniqueByName.set(g.groupName, g);
+        }
+      }
+      return Array.from(uniqueByName.values()).sort((a, b) => a.groupName.localeCompare(b.groupName));
     } catch (e: any) {
       console.error("[Firestore] groupService.getByTournament failed:", e?.code, e?.message);
       return getLocalStore().groups.filter((g) => g.tournamentId === tournamentId);
