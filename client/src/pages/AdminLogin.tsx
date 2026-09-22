@@ -77,7 +77,7 @@ export default function AdminLogin() {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="admin or notapro@s43.com"
+                  placeholder="Enter username or email"
                   className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 py-3 pl-10 pr-4 text-sm font-semibold text-white placeholder-neutral-600 focus:border-orange-500 focus:outline-none"
                 />
               </div>
