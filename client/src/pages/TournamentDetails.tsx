@@ -176,13 +176,15 @@ export default function TournamentDetails() {
       </header>
 
       {/* Navigation Tabs Header & Interactive Filter Bar */}
-      <div className="relative z-10 border-b border-[#ffd700]/20 bg-[#06080e]/95 backdrop-blur-md py-4">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+      <div className="relative z-10 border-b border-orange-500/20 bg-[#06080e]/95 backdrop-blur-md py-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          
+          {/* FANCY SEGMENTED DOCK TABS */}
+          <div className="flex p-1.5 rounded-2xl bg-neutral-950/90 border border-orange-500/25 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(255,106,0,0.08)] items-center gap-1.5 overflow-x-auto no-scrollbar max-w-full">
             {[
-              { id: "standings" as const, label: "1. Standings", icon: Trophy, count: standings.length },
-              { id: "fixtures" as const, label: "2. Fixtures", icon: Calendar, count: matches.length },
-              { id: "knockout" as const, label: "3. Knockouts", icon: Crown, count: knockoutRounds.length }
+              { id: "standings" as const, step: "01", label: "Standings", icon: Trophy, count: standings.length },
+              { id: "fixtures" as const, step: "02", label: "Fixtures", icon: Calendar, count: matches.length },
+              { id: "knockout" as const, step: "03", label: "Knockouts", icon: Crown, count: knockoutRounds.length }
             ].map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;
@@ -190,31 +192,53 @@ export default function TournamentDetails() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider transition-colors duration-200 shrink-0 cursor-pointer select-none ${
-                    isActive ? "text-black font-black" : "text-slate-400 hover:text-white"
+                  className={`group relative flex items-center gap-2.5 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-[13px] font-black uppercase tracking-[0.14em] transition-all duration-300 shrink-0 cursor-pointer select-none ${
+                    isActive ? "text-black" : "text-neutral-400 hover:text-white"
                   }`}
                 >
-                  {/* Smooth Sliding Active Pill Background */}
+                  {/* Smooth Sliding Active Pill Background with Neon Top Bevel & Shadow */}
                   {isActive && (
                     <motion.div
                       layoutId="activeTournamentTabPill"
-                      className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 shadow-[0_0_20px_rgba(255,120,0,0.35)] z-0"
-                      transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
+                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 shadow-[0_0_25px_rgba(255,106,0,0.5),inset_0_1px_0_rgba(255,255,255,0.4)] z-0"
+                      transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
                     />
                   )}
 
-                  {/* Inactive Tab Border & Background */}
+                  {/* Inactive Tab Subtle Outline */}
                   {!isActive && (
-                    <div className="absolute inset-0 rounded-2xl bg-[#0f131d]/90 border border-[#ffd700]/20 hover:border-[#ffd700]/50 -z-10 transition-colors" />
+                    <div className="absolute inset-0 rounded-xl bg-neutral-900/30 border border-neutral-800/70 group-hover:border-orange-500/40 group-hover:bg-neutral-900/80 transition-all -z-10" />
                   )}
 
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>{tab.label}</span>
+                  <span className="relative z-10 flex items-center gap-2.5">
+                    {/* Step Numeral Badge */}
+                    <span
+                      className={`text-[9px] font-black font-mono px-1.5 py-0.5 rounded-md transition-colors ${
+                        isActive
+                          ? "bg-black/25 text-black"
+                          : "bg-neutral-900 border border-neutral-800 text-orange-500/90 group-hover:text-orange-400 group-hover:border-orange-500/40"
+                      }`}
+                    >
+                      {tab.step}
+                    </span>
+
+                    {/* Icon */}
+                    <Icon
+                      className={`h-4 w-4 transition-transform duration-300 group-hover:scale-110 ${
+                        isActive ? "text-black drop-shadow-sm" : "text-amber-500/80 group-hover:text-amber-400"
+                      }`}
+                    />
+
+                    {/* Label */}
+                    <span className="tracking-wider">{tab.label}</span>
+
+                    {/* Count Pill */}
                     {tab.count > 0 && (
                       <span
-                        className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-black transition-colors ${
-                          isActive ? "bg-black/20 text-black" : "bg-[#ffd700]/10 text-[#ffd700]"
+                        className={`ml-0.5 rounded-md px-2 py-0.5 text-[10px] font-mono font-black transition-colors ${
+                          isActive
+                            ? "bg-black/20 text-black"
+                            : "bg-neutral-900/90 border border-neutral-800 text-neutral-400 group-hover:text-amber-300 group-hover:border-amber-500/30"
                         }`}
                       >
                         {tab.count}
@@ -228,28 +252,28 @@ export default function TournamentDetails() {
 
           {/* Quick Group Filter Pills (Active when Standings tab is open) */}
           {activeTab === "standings" && standings.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#ffd700]/10">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mr-1 hidden md:inline">
-                Filter:
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-neutral-950/80 border border-orange-500/20 backdrop-blur-md shadow-md">
+              <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 px-2.5 hidden sm:inline">
+                Pools:
               </span>
               <button
                 onClick={() => setSelectedGroupFilter("ALL")}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                   selectedGroupFilter === "ALL"
-                    ? "bg-[#ff5500] text-black shadow-md shadow-orange-500/30"
-                    : "bg-[#0d1017] border border-[#ffd700]/20 text-slate-400 hover:text-white"
+                    ? "bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md shadow-orange-500/30 scale-[1.02]"
+                    : "text-neutral-400 hover:text-white hover:bg-neutral-900/60"
                 }`}
               >
-                All Groups
+                All
               </button>
               {standings.map((g) => (
                 <button
                   key={g.groupId}
                   onClick={() => setSelectedGroupFilter(g.groupId)}
-                  className={`px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                     selectedGroupFilter === g.groupId
-                      ? "bg-[#ff5500] text-black shadow-md shadow-orange-500/30"
-                      : "bg-[#0d1017] border border-[#ffd700]/20 text-slate-400 hover:text-white"
+                      ? "bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md shadow-orange-500/30 scale-[1.02]"
+                      : "text-neutral-400 hover:text-white hover:bg-neutral-900/60"
                   }`}
                 >
                   {g.groupName.replace("Group ", "G-")}

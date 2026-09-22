@@ -3,24 +3,68 @@ import { Link } from "react-router-dom";
 import { Tournament } from "../types";
 import { tournamentService } from "../services/firebaseService";
 import { Trophy, Settings, Swords, Crosshair } from "lucide-react";
+import { motion } from "framer-motion";
 import InteractiveTournamentCard from "../components/InteractiveTournamentCard";
 
 const staticParticles = [
-  { size: 3, left: 12, top: 40, duration: 18, delay: -4, sway: 20 },
-  { size: 4, left: 28, top: 75, duration: 22, delay: -8, sway: -15 },
-  { size: 2, left: 45, top: 20, duration: 15, delay: -2, sway: 25 },
-  { size: 5, left: 62, top: 60, duration: 25, delay: -12, sway: -20 },
-  { size: 3, left: 78, top: 35, duration: 19, delay: -6, sway: 15 },
-  { size: 4, left: 88, top: 80, duration: 21, delay: -16, sway: -10 },
-  { size: 2, left: 15, top: 65, duration: 16, delay: -3, sway: 18 },
-  { size: 3, left: 38, top: 15, duration: 20, delay: -10, sway: -22 },
-  { size: 5, left: 52, top: 85, duration: 24, delay: -14, sway: 30 },
-  { size: 2, left: 70, top: 50, duration: 17, delay: -5, sway: -12 },
-  { size: 4, left: 95, top: 25, duration: 23, delay: -18, sway: 15 },
-  { size: 3, left: 5, top: 90, duration: 19, delay: -7, sway: -18 },
-  { size: 2, left: 50, top: 45, duration: 14, delay: -1, sway: 22 },
-  { size: 4, left: 82, top: 70, duration: 20, delay: -9, sway: -25 },
-  { size: 3, left: 22, top: 30, duration: 18, delay: -11, sway: 12 }
+  // Left Zone (0% - 33%)
+  { size: 3, left: 4, top: 22, duration: 18, delay: -4, color: "radial-gradient(circle, #ff9e00 0%, #ff5500 100%)", glow: "0 0 10px rgba(255,158,0,0.9), 0 0 20px rgba(255,85,0,0.5)" },
+  { size: 2, left: 8, top: 58, duration: 14, delay: -9, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 8px rgba(255,208,0,0.8)" },
+  { size: 4.5, left: 12, top: 38, duration: 22, delay: -2, color: "radial-gradient(circle, #ff7b00 0%, #ff3700 100%)", glow: "0 0 12px rgba(255,123,0,0.9), 0 0 24px rgba(255,55,0,0.6)" },
+  { size: 2, left: 15, top: 78, duration: 16, delay: -12, color: "radial-gradient(circle, #ff9e00 0%, #ff5500 100%)", glow: "0 0 8px rgba(255,158,0,0.75)" },
+  { size: 3.5, left: 18, top: 18, duration: 20, delay: -7, color: "radial-gradient(circle, #ffd000 0%, #ff7b00 100%)", glow: "0 0 10px rgba(255,208,0,0.85), 0 0 20px rgba(255,123,0,0.4)" },
+  { size: 2.5, left: 22, top: 88, duration: 15, delay: -15, color: "radial-gradient(circle, #ff6a00 0%, #d83a00 100%)", glow: "0 0 8px rgba(255,106,0,0.8)" },
+  { size: 5, left: 25, top: 48, duration: 24, delay: -5, color: "radial-gradient(circle, #ffaa00 0%, #ff4d00 100%)", glow: "0 0 14px rgba(255,170,0,0.95), 0 0 26px rgba(255,77,0,0.6)" },
+  { size: 2, left: 28, top: 28, duration: 13, delay: -11, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 6px rgba(255,208,0,0.7)" },
+  { size: 3, left: 31, top: 68, duration: 19, delay: -1, color: "radial-gradient(circle, #ff8c00 0%, #ff4400 100%)", glow: "0 0 9px rgba(255,140,0,0.85)" },
+  { size: 4, left: 33, top: 12, duration: 21, delay: -17, color: "radial-gradient(circle, #ff9e00 0%, #e63900 100%)", glow: "0 0 11px rgba(255,158,0,0.9), 0 0 22px rgba(230,57,0,0.5)" },
+  { size: 1.5, left: 10, top: 85, duration: 12, delay: -6, color: "radial-gradient(circle, #ffd700 0%, #ff9e00 100%)", glow: "0 0 6px rgba(255,215,0,0.7)" },
+  { size: 2.5, left: 6, top: 44, duration: 17, delay: -14, color: "radial-gradient(circle, #ff6a00 0%, #d83a00 100%)", glow: "0 0 8px rgba(255,106,0,0.8)" },
+  { size: 3.5, left: 27, top: 74, duration: 20, delay: -8, color: "radial-gradient(circle, #ffaa00 0%, #ff4d00 100%)", glow: "0 0 10px rgba(255,170,0,0.85)" },
+
+  // Center Zone (34% - 66%)
+  { size: 2, left: 36, top: 82, duration: 15, delay: -3, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 8px rgba(255,208,0,0.8)" },
+  { size: 4, left: 39, top: 32, duration: 23, delay: -10, color: "radial-gradient(circle, #ff8c00 0%, #ff3c00 100%)", glow: "0 0 12px rgba(255,140,0,0.9), 0 0 22px rgba(255,60,0,0.5)" },
+  { size: 2.5, left: 42, top: 62, duration: 16, delay: -18, color: "radial-gradient(circle, #ffaa00 0%, #ff5500 100%)", glow: "0 0 9px rgba(255,170,0,0.85)" },
+  { size: 5.5, left: 45, top: 16, duration: 26, delay: -6, color: "radial-gradient(circle, #ffd700 0%, #ff6600 100%)", glow: "0 0 16px rgba(255,215,0,0.95), 0 0 30px rgba(255,102,0,0.6)" },
+  { size: 2, left: 48, top: 92, duration: 14, delay: -13, color: "radial-gradient(circle, #ff7b00 0%, #d83a00 100%)", glow: "0 0 7px rgba(255,123,0,0.75)" },
+  { size: 3, left: 51, top: 46, duration: 18, delay: -2, color: "radial-gradient(circle, #ff9e00 0%, #ff4d00 100%)", glow: "0 0 10px rgba(255,158,0,0.85)" },
+  { size: 4.5, left: 54, top: 76, duration: 22, delay: -16, color: "radial-gradient(circle, #ffd000 0%, #ff6a00 100%)", glow: "0 0 13px rgba(255,208,0,0.9), 0 0 25px rgba(255,106,0,0.5)" },
+  { size: 2, left: 57, top: 26, duration: 15, delay: -8, color: "radial-gradient(circle, #ffaa00 0%, #ff5500 100%)", glow: "0 0 7px rgba(255,170,0,0.8)" },
+  { size: 3.5, left: 60, top: 56, duration: 19, delay: -19, color: "radial-gradient(circle, #ff8c00 0%, #ff3c00 100%)", glow: "0 0 11px rgba(255,140,0,0.85)" },
+  { size: 5, left: 63, top: 86, duration: 25, delay: -4, color: "radial-gradient(circle, #ffd700 0%, #ff5500 100%)", glow: "0 0 15px rgba(255,215,0,0.95), 0 0 28px rgba(255,85,0,0.6)" },
+  { size: 1.5, left: 40, top: 70, duration: 11, delay: -9, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 6px rgba(255,208,0,0.7)" },
+  { size: 3, left: 47, top: 52, duration: 17, delay: -12, color: "radial-gradient(circle, #ff8c00 0%, #ff4400 100%)", glow: "0 0 9px rgba(255,140,0,0.85)" },
+  { size: 2.5, left: 59, top: 38, duration: 16, delay: -5, color: "radial-gradient(circle, #ffd700 0%, #ff7b00 100%)", glow: "0 0 8px rgba(255,215,0,0.8)" },
+  { size: 4, left: 65, top: 22, duration: 21, delay: -14, color: "radial-gradient(circle, #ff9e00 0%, #e63900 100%)", glow: "0 0 12px rgba(255,158,0,0.9)" },
+
+  // Right Zone (67% - 100%)
+  { size: 2.5, left: 68, top: 42, duration: 17, delay: -1, color: "radial-gradient(circle, #ff9e00 0%, #ff5500 100%)", glow: "0 0 9px rgba(255,158,0,0.85)" },
+  { size: 4.5, left: 71, top: 72, duration: 23, delay: -15, color: "radial-gradient(circle, #ff7b00 0%, #ff3700 100%)", glow: "0 0 13px rgba(255,123,0,0.9), 0 0 25px rgba(255,55,0,0.55)" },
+  { size: 2, left: 74, top: 14, duration: 14, delay: -7, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 7px rgba(255,208,0,0.75)" },
+  { size: 3.5, left: 77, top: 50, duration: 19, delay: -11, color: "radial-gradient(circle, #ffaa00 0%, #ff4d00 100%)", glow: "0 0 10px rgba(255,170,0,0.85)" },
+  { size: 2, left: 80, top: 90, duration: 16, delay: -3, color: "radial-gradient(circle, #ff6a00 0%, #d83a00 100%)", glow: "0 0 7px rgba(255,106,0,0.75)" },
+  { size: 5, left: 83, top: 34, duration: 24, delay: -17, color: "radial-gradient(circle, #ffd700 0%, #ff6600 100%)", glow: "0 0 15px rgba(255,215,0,0.95), 0 0 28px rgba(255,102,0,0.6)" },
+  { size: 2.5, left: 86, top: 64, duration: 18, delay: -6, color: "radial-gradient(circle, #ff8c00 0%, #ff4400 100%)", glow: "0 0 9px rgba(255,140,0,0.85)" },
+  { size: 4, left: 89, top: 20, duration: 20, delay: -13, color: "radial-gradient(circle, #ffd000 0%, #ff7b00 100%)", glow: "0 0 12px rgba(255,208,0,0.9), 0 0 22px rgba(255,123,0,0.5)" },
+  { size: 2, left: 92, top: 80, duration: 13, delay: -5, color: "radial-gradient(circle, #ff9e00 0%, #ff5500 100%)", glow: "0 0 8px rgba(255,158,0,0.75)" },
+  { size: 3.5, left: 95, top: 45, duration: 21, delay: -18, color: "radial-gradient(circle, #ff7b00 0%, #d83a00 100%)", glow: "0 0 11px rgba(255,123,0,0.85)" },
+  { size: 2, left: 98, top: 15, duration: 15, delay: -2, color: "radial-gradient(circle, #ffd700 0%, #ff8c00 100%)", glow: "0 0 7px rgba(255,215,0,0.75)" },
+  { size: 1.5, left: 73, top: 30, duration: 12, delay: -10, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 6px rgba(255,208,0,0.7)" },
+  { size: 3, left: 81, top: 18, duration: 17, delay: -8, color: "radial-gradient(circle, #ffaa00 0%, #ff5500 100%)", glow: "0 0 9px rgba(255,170,0,0.85)" },
+  { size: 2.5, left: 91, top: 55, duration: 16, delay: -14, color: "radial-gradient(circle, #ff8c00 0%, #ff3c00 100%)", glow: "0 0 8px rgba(255,140,0,0.8)" },
+  { size: 4, left: 96, top: 72, duration: 22, delay: -9, color: "radial-gradient(circle, #ffd700 0%, #ff6600 100%)", glow: "0 0 12px rgba(255,215,0,0.9)" },
+
+  // Ambient Drifters (Deep background layering)
+  { size: 2, left: 2, top: 10, duration: 19, delay: -16, color: "radial-gradient(circle, #ffd700 0%, #ff8c00 100%)", glow: "0 0 7px rgba(255,215,0,0.7)" },
+  { size: 3, left: 16, top: 5, duration: 21, delay: -3, color: "radial-gradient(circle, #ffaa00 0%, #ff4d00 100%)", glow: "0 0 9px rgba(255,170,0,0.8)" },
+  { size: 2.5, left: 35, top: 5, duration: 16, delay: -11, color: "radial-gradient(circle, #ffd000 0%, #ff7b00 100%)", glow: "0 0 8px rgba(255,208,0,0.75)" },
+  { size: 2, left: 50, top: 8, duration: 14, delay: -5, color: "radial-gradient(circle, #ff9e00 0%, #ff5500 100%)", glow: "0 0 7px rgba(255,158,0,0.75)" },
+  { size: 3.5, left: 67, top: 6, duration: 20, delay: -13, color: "radial-gradient(circle, #ffd700 0%, #ff6600 100%)", glow: "0 0 11px rgba(255,215,0,0.85)" },
+  { size: 2, left: 85, top: 8, duration: 15, delay: -4, color: "radial-gradient(circle, #ff8c00 0%, #ff3c00 100%)", glow: "0 0 7px rgba(255,140,0,0.75)" },
+  { size: 2.5, left: 94, top: 92, duration: 17, delay: -12, color: "radial-gradient(circle, #ffd000 0%, #ff8c00 100%)", glow: "0 0 8px rgba(255,208,0,0.8)" },
+  { size: 1.5, left: 20, top: 94, duration: 13, delay: -7, color: "radial-gradient(circle, #ffaa00 0%, #ff5500 100%)", glow: "0 0 6px rgba(255,170,0,0.7)" },
+  { size: 3, left: 75, top: 94, duration: 18, delay: -15, color: "radial-gradient(circle, #ffd700 0%, #ff7b00 100%)", glow: "0 0 10px rgba(255,215,0,0.85)" }
 ];
 
 export default function Home() {
@@ -106,8 +150,8 @@ export default function Home() {
                 height: p.size,
                 left: `${p.left}%`,
                 top: `${p.top}%`,
-                background: "radial-gradient(circle, #ff8c00 0%, #ff4e00 100%)",
-                boxShadow: "0 0 10px rgba(255,106,0,0.9), 0 0 20px rgba(255,78,0,0.5)",
+                background: p.color || "radial-gradient(circle, #ff8c00 0%, #ff4e00 100%)",
+                boxShadow: p.glow || "0 0 10px rgba(255,106,0,0.9), 0 0 20px rgba(255,78,0,0.5)",
                 animationDuration: `${p.duration}s`,
                 animationDelay: `${p.delay}s`
               } as React.CSSProperties}
@@ -118,30 +162,55 @@ export default function Home() {
         <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-12" style={{ minHeight: "82vh", display: "flex", flexDirection: "column" }}>
           {/* NAV PILL */}
           <div className="flex justify-center pt-6 pb-4">
-            <div className="flex items-center gap-1 rounded-full p-1.5" style={{ background: "rgba(10,8,6,0.88)", border: "1px solid rgba(255,106,0,0.22)", backdropFilter: "blur(20px)" }}>
+            <div className="relative flex items-center gap-1.5 rounded-full p-1.5 bg-neutral-950/90 border border-orange-500/25 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(255,106,0,0.1)]">
+              {/* VSA Button */}
               <button
                 onClick={() => setActiveTab("VSA")}
-                className="flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.14em] transition-all duration-300 cursor-pointer"
-                style={activeTab === "VSA" ? { background: "linear-gradient(135deg,#ff4e00,#ff8c00,#ff6a00)", color: "#050505", boxShadow: "0 0 18px rgba(255,106,0,0.45)" } : { color: "rgba(255,255,255,0.35)" }}
+                className={`relative flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition-colors duration-300 cursor-pointer select-none ${
+                  activeTab === "VSA" ? "text-black" : "text-neutral-400 hover:text-white"
+                }`}
               >
-                <Crosshair className="h-3.5 w-3.5" />
-                VSA
+                {activeTab === "VSA" && (
+                  <motion.div
+                    layoutId="activeHomeModePill"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 shadow-[0_0_20px_rgba(255,106,0,0.5),inset_0_1px_0_rgba(255,255,255,0.4)] z-0"
+                    transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Crosshair className={`h-3.5 w-3.5 transition-transform duration-300 ${activeTab === "VSA" ? "text-black scale-110" : "text-amber-500/80"}`} />
+                  <span>VSA</span>
+                </span>
               </button>
+
+              {/* H2H Button */}
               <button
                 onClick={() => setActiveTab("H2H")}
-                className="flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.14em] transition-all duration-300 cursor-pointer"
-                style={activeTab === "H2H" ? { background: "linear-gradient(135deg,#ff4e00,#ff8c00,#ff6a00)", color: "#050505", boxShadow: "0 0 18px rgba(255,106,0,0.45)" } : { color: "rgba(255,255,255,0.35)" }}
+                className={`relative flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition-colors duration-300 cursor-pointer select-none ${
+                  activeTab === "H2H" ? "text-black" : "text-neutral-400 hover:text-white"
+                }`}
               >
-                <Swords className="h-3.5 w-3.5" />
-                H2H
+                {activeTab === "H2H" && (
+                  <motion.div
+                    layoutId="activeHomeModePill"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 shadow-[0_0_20px_rgba(255,106,0,0.5),inset_0_1px_0_rgba(255,255,255,0.4)] z-0"
+                    transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Swords className={`h-3.5 w-3.5 transition-transform duration-300 ${activeTab === "H2H" ? "text-black scale-110" : "text-amber-500/80"}`} />
+                  <span>H2H</span>
+                </span>
               </button>
+
+              {/* Admin Link */}
               <Link
                 to="/admin"
-                className="flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.14em] transition-all duration-300"
-                style={{ color: "rgba(255,255,255,0.35)" }}
+                className="group relative flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-neutral-400 hover:text-white transition-colors duration-300"
               >
-                <Settings className="h-3.5 w-3.5" />
-                Admin
+                <div className="absolute inset-0 rounded-full bg-neutral-900/40 border border-neutral-800/60 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                <Settings className="h-3.5 w-3.5 text-neutral-500 group-hover:text-amber-400 group-hover:rotate-45 transition-all duration-300" />
+                <span>Admin</span>
               </Link>
             </div>
           </div>
