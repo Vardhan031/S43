@@ -388,34 +388,94 @@ export const participantService = {
       const q = query(collection(db, "participants"), where("tournamentId", "==", tournamentId));
       const snapshot = await getDocs(q);
       return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Participant));
-    } catch (e) {
+    } catch (e: any) {
+      console.error("[Firestore] participantService.getByTournament failed:", e?.code, e?.message);
       return getLocalStore().participants.filter((p) => p.tournamentId === tournamentId);
     }
   },
 
   async add(tournamentId: string, displayName: string): Promise<Participant> {
+    const trimmed = displayName.trim();
+    if (!trimmed) throw new Error("Player name cannot be empty");
+
+    const tournament = await tournamentService.getById(tournamentId);
+    if (tournament.status !== "DRAFT") {
+      throw new Error("Cannot add players: Tournament roster is locked.");
+    }
+
+    const current = await this.getByTournament(tournamentId);
+    if (current.length >= tournament.totalPlayers) {
+      throw new Error(`Roster capacity reached (${tournament.totalPlayers} max).`);
+    }
+
+    const isDuplicate = current.some(
+      (p) => p.displayName.trim().toLowerCase() === trimmed.toLowerCase()
+    );
+    if (isDuplicate) {
+      throw new Error(`Player "${trimmed}" is already registered.`);
+    }
+
     const pData = {
       tournamentId,
-      displayName: displayName.trim(),
+      displayName: trimmed,
       createdAt: new Date().toISOString()
     };
 
     if (!isFirebaseConfigured || !db) {
       const store = getLocalStore();
-      const created: Participant = { id: `part_${Date.now()}_${Math.random()}`, ...pData };
+      const created: Participant = { id: `part_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`, ...pData };
       store.participants.push(created);
       saveLocalStore(store);
       return created;
     }
 
-    const ref = await addDoc(collection(db, "participants"), pData);
-    return { id: ref.id, ...pData };
+    try {
+      const ref = await addDoc(collection(db, "participants"), pData);
+      return { id: ref.id, ...pData };
+    } catch (err: any) {
+      console.error("[Firestore] participantService.add failed:", err);
+      throw new Error(`Failed to add player: ${err?.code || err?.message || err}`);
+    }
   },
 
   async bulkAdd(tournamentId: string, displayNames: string[]): Promise<Participant[]> {
+    const tournament = await tournamentService.getById(tournamentId);
+    if (tournament.status !== "DRAFT") {
+      throw new Error("Cannot add players: Tournament roster is locked.");
+    }
+
+    const current = await this.getByTournament(tournamentId);
+    const remainingSlots = tournament.totalPlayers - current.length;
+
+    if (remainingSlots <= 0) {
+      throw new Error(`Roster capacity reached (${tournament.totalPlayers} max).`);
+    }
+
+    const existingNames = new Set(current.map((p) => p.displayName.trim().toLowerCase()));
+    const validBatch: string[] = [];
+    const seenBatch = new Set<string>();
+
+    for (const raw of displayNames) {
+      const name = raw.trim();
+      if (!name) continue;
+      const lower = name.toLowerCase();
+      if (existingNames.has(lower) || seenBatch.has(lower)) continue;
+      seenBatch.add(lower);
+      validBatch.push(name);
+    }
+
+    if (validBatch.length === 0) {
+      throw new Error("No new unique players to add (all were duplicates or empty).");
+    }
+
+    if (validBatch.length > remainingSlots) {
+      throw new Error(
+        `Cannot add ${validBatch.length} players. Only ${remainingSlots} slot(s) remaining (Max ${tournament.totalPlayers}).`
+      );
+    }
+
     const created: Participant[] = [];
-    for (const name of displayNames) {
-      if (!name.trim()) continue;
+    for (const name of validBatch) {
       const p = await this.add(tournamentId, name);
       created.push(p);
     }
@@ -429,7 +489,12 @@ export const participantService = {
       saveLocalStore(store);
       return;
     }
-    await deleteDoc(doc(db, "participants", id));
+    try {
+      await deleteDoc(doc(db, "participants", id));
+    } catch (err: any) {
+      console.error("[Firestore] participantService.remove failed:", err);
+      throw new Error(`Failed to remove player: ${err?.code || err?.message || err}`);
+    }
   }
 };
 

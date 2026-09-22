@@ -328,14 +328,30 @@ export default function Admin() {
 
   const handleAddParticipant = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTournament || !newPlayerName.trim()) return;
+    if (!selectedTournament) return;
+    const trimmed = newPlayerName.trim();
+    if (!trimmed) return;
+
+    if (participants.length >= selectedTournament.totalPlayers) {
+      alertError(`Roster capacity reached (${selectedTournament.totalPlayers} players max).`);
+      return;
+    }
+
+    const isDuplicate = participants.some(
+      (p) => p.displayName.trim().toLowerCase() === trimmed.toLowerCase()
+    );
+    if (isDuplicate) {
+      alertError(`Player "${trimmed}" is already registered.`);
+      return;
+    }
+
     setActionLoading(true);
     try {
-      await participantService.add(selectedTournament.id, newPlayerName);
+      await participantService.add(selectedTournament.id, trimmed);
       setNewPlayerName("");
       const updated = await participantService.getByTournament(selectedTournament.id);
       setParticipants(updated);
-      alertSuccess("Player added!");
+      alertSuccess(`Player "${trimmed}" added!`);
     } catch (err: any) {
       alertError(err.message);
     } finally {
@@ -345,15 +361,63 @@ export default function Admin() {
 
   const handleBulkAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTournament || !bulkPlayerNames.trim()) return;
+    if (!selectedTournament) return;
+    const rawLines = bulkPlayerNames.split("\n").map((n) => n.trim()).filter((n) => n.length > 0);
+    if (rawLines.length === 0) return;
+
+    const remainingSlots = selectedTournament.totalPlayers - participants.length;
+    if (remainingSlots <= 0) {
+      alertError(`Roster is full (${selectedTournament.totalPlayers} players max).`);
+      return;
+    }
+
+    // Deduplicate within the batch itself
+    const seenBatch = new Set<string>();
+    const uniqueBatch: string[] = [];
+    for (const name of rawLines) {
+      const lower = name.toLowerCase();
+      if (!seenBatch.has(lower)) {
+        seenBatch.add(lower);
+        uniqueBatch.push(name);
+      }
+    }
+
+    // Check against already registered participants
+    const existingLower = new Set(participants.map((p) => p.displayName.trim().toLowerCase()));
+    const toAdd: string[] = [];
+    const skippedDuplicates: string[] = [];
+
+    for (const name of uniqueBatch) {
+      if (existingLower.has(name.toLowerCase())) {
+        skippedDuplicates.push(name);
+      } else {
+        toAdd.push(name);
+      }
+    }
+
+    if (toAdd.length === 0) {
+      alertError("All entered players are already registered.");
+      return;
+    }
+
+    if (toAdd.length > remainingSlots) {
+      alertError(
+        `Cannot add ${toAdd.length} players. Only ${remainingSlots} slot(s) remaining (Max ${selectedTournament.totalPlayers}).`
+      );
+      return;
+    }
+
     setActionLoading(true);
     try {
-      const names = bulkPlayerNames.split("\n").filter((n) => n.trim().length > 0);
-      await participantService.bulkAdd(selectedTournament.id, names);
+      await participantService.bulkAdd(selectedTournament.id, toAdd);
       setBulkPlayerNames("");
       const updated = await participantService.getByTournament(selectedTournament.id);
       setParticipants(updated);
-      alertSuccess(`Added ${names.length} players!`);
+      if (skippedDuplicates.length > 0) {
+        alertSuccess(`Added ${toAdd.length} player(s). (${skippedDuplicates.length} duplicates skipped)`);
+      } else {
+        alertSuccess(`Added ${toAdd.length} player(s)!`);
+      }
     } catch (err: any) {
       alertError(err.message);
     } finally {
@@ -878,41 +942,76 @@ export default function Admin() {
                     ) : (
                       /* Player Registration Form */
                       <div className="rounded-2xl border border-neutral-800 bg-[#07090e] p-6 space-y-4">
-                        <h3 className="font-extrabold text-sm uppercase text-white tracking-wide">
-                          Add Players to Roster
-                        </h3>
-                        <form onSubmit={handleAddParticipant} className="flex gap-2">
-                          <input
-                            type="text"
-                            value={newPlayerName}
-                            onChange={(e) => setNewPlayerName(e.target.value)}
-                            placeholder="Player Display Name"
-                            className="flex-1 rounded-xl border border-neutral-800 bg-[#0d111a] px-3.5 py-2 text-xs text-white focus:border-orange-500 focus:outline-none"
-                          />
-                          <button
-                            type="submit"
-                            className="rounded-xl bg-orange-500 px-4 py-2 text-xs font-black uppercase text-black hover:bg-orange-400 transition"
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-extrabold text-sm uppercase text-white tracking-wide">
+                            Add Players to Roster
+                          </h3>
+                          <span
+                            className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+                              participants.length >= selectedTournament.totalPlayers
+                                ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-400"
+                                : "bg-orange-950/40 border-orange-500/30 text-orange-400"
+                            }`}
                           >
-                            Add Player
-                          </button>
-                        </form>
-
-                        <div className="pt-2 border-t border-neutral-900">
-                          <textarea
-                            rows={2}
-                            value={bulkPlayerNames}
-                            onChange={(e) => setBulkPlayerNames(e.target.value)}
-                            placeholder="Paste multiple player names (one per line)"
-                            className="w-full rounded-xl border border-neutral-800 bg-[#0d111a] px-3.5 py-2 text-xs text-white placeholder-neutral-600 focus:border-orange-500 focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleBulkAdd}
-                            className="mt-2 rounded-xl border border-neutral-800 bg-[#0d111a] px-4 py-2 text-xs font-bold text-neutral-300 hover:text-white transition"
-                          >
-                            Bulk Import
-                          </button>
+                            {participants.length >= selectedTournament.totalPlayers
+                              ? "Roster Full ✓"
+                              : `${selectedTournament.totalPlayers - participants.length} Slot(s) Left`}
+                          </span>
                         </div>
+
+                        {participants.length >= selectedTournament.totalPlayers ? (
+                          <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/15 p-3.5 text-center text-xs text-emerald-300 font-medium">
+                            All {selectedTournament.totalPlayers} player slots filled! Go to{" "}
+                            <span
+                              onClick={() => setActiveTab("brackets")}
+                              className="font-bold underline text-orange-400 hover:text-orange-300 cursor-pointer"
+                            >
+                              2. Brackets & Pools
+                            </span>{" "}
+                            to draw the groups.
+                          </div>
+                        ) : (
+                          <>
+                            <form onSubmit={handleAddParticipant} className="flex gap-2">
+                              <input
+                                type="text"
+                                value={newPlayerName}
+                                onChange={(e) => setNewPlayerName(e.target.value)}
+                                placeholder="Player Display Name"
+                                disabled={actionLoading}
+                                className="flex-1 rounded-xl border border-neutral-800 bg-[#0d111a] px-3.5 py-2 text-xs text-white focus:border-orange-500 focus:outline-none"
+                              />
+                              <button
+                                type="submit"
+                                disabled={actionLoading}
+                                className="rounded-xl bg-orange-500 px-4 py-2 text-xs font-black uppercase text-black hover:bg-orange-400 transition cursor-pointer disabled:opacity-50"
+                              >
+                                Add Player
+                              </button>
+                            </form>
+
+                            <div className="pt-2 border-t border-neutral-900">
+                              <textarea
+                                rows={2}
+                                value={bulkPlayerNames}
+                                onChange={(e) => setBulkPlayerNames(e.target.value)}
+                                placeholder={`Paste up to ${
+                                  selectedTournament.totalPlayers - participants.length
+                                } player names (one per line)`}
+                                disabled={actionLoading}
+                                className="w-full rounded-xl border border-neutral-800 bg-[#0d111a] px-3.5 py-2 text-xs text-white placeholder-neutral-600 focus:border-orange-500 focus:outline-none"
+                              />
+                              <button
+                                type="button"
+                                onClick={handleBulkAdd}
+                                disabled={actionLoading}
+                                className="mt-2 rounded-xl border border-neutral-800 bg-[#0d111a] px-4 py-2 text-xs font-bold text-neutral-300 hover:text-white transition cursor-pointer disabled:opacity-50"
+                              >
+                                Bulk Import
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
 
