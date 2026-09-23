@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Trophy, LayoutDashboard } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { tournamentService } from "../services/firebaseService";
 import RulesModal from "./RulesModal";
 
@@ -65,28 +65,20 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <nav className="flex items-center gap-1.5 sm:gap-4 text-xs sm:text-sm font-medium">
+          <nav className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm font-medium">
             <Link
               to="/"
-              className="text-slate-300 hover:text-orange-400 transition-colors py-1.5 sm:py-2 px-2 sm:px-3 rounded hover:bg-white/5 shrink-0"
+              className="text-slate-300 hover:text-orange-400 transition-colors py-1.5 sm:py-2 px-2.5 sm:px-3 rounded hover:bg-white/5 shrink-0"
             >
               Tournaments
             </Link>
             <button
               type="button"
               onClick={() => setShowRulesModal(true)}
-              className="text-slate-300 hover:text-orange-400 transition-colors py-1.5 sm:py-2 px-2 sm:px-3 rounded hover:bg-white/5 cursor-pointer shrink-0"
+              className="text-slate-300 hover:text-orange-400 transition-colors py-1.5 sm:py-2 px-2.5 sm:px-3 rounded hover:bg-white/5 cursor-pointer shrink-0"
             >
               Rules
             </button>
-            <Link
-              to="/admin"
-              className="flex items-center gap-1 sm:gap-1.5 rounded-lg bg-gradient-to-r from-[#ff4e00] to-[#ff8c00] px-2.5 sm:px-4 py-1.5 sm:py-2 font-black text-slate-950 shadow-md shadow-orange-500/10 hover:brightness-110 transition-all duration-200 active:scale-95 shrink-0"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              <span className="hidden xs:inline sm:inline">Dashboard</span>
-              <span className="xs:hidden sm:hidden">Admin</span>
-            </Link>
           </nav>
         </div>
       </header>

@@ -11,9 +11,9 @@ export default function App() {
   return (
     <Router>
       <AlertProvider>
-        <div className="min-h-screen flex flex-col bg-black text-slate-100 font-sans selection:bg-orange-500 selection:text-black">
+        <div className="min-h-screen flex flex-col bg-black text-slate-100 font-sans selection:bg-orange-500 selection:text-black overflow-x-hidden">
           <Navbar />
-          <main className="flex-grow flex flex-col">
+          <main className="flex-grow flex flex-col min-w-0">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/tournaments/:id" element={<TournamentDetails />} />
