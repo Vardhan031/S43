@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Tournament } from "../types";
 import { tournamentService } from "../services/firebaseService";
-import { Trophy, Settings, Swords, Crosshair } from "lucide-react";
+import { Trophy, Settings, Swords, Crosshair, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import InteractiveTournamentCard from "../components/InteractiveTournamentCard";
+import RulesModal from "../components/RulesModal";
+import RulesSection from "../components/RulesSection";
 
 const staticParticles = [
   // Left Zone (0% - 33%)
@@ -71,6 +73,7 @@ export default function Home() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"VSA" | "H2H">("VSA");
+  const [showRulesModal, setShowRulesModal] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -96,6 +99,14 @@ export default function Home() {
       clearTimeout(timer);
       unsubscribe();
     };
+  }, []);
+
+  useEffect(() => {
+    if (window.location.hash === "#rules") {
+      setTimeout(() => {
+        document.getElementById("rules")?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    }
   }, []);
 
   const currentModeTournaments = tournaments.filter((t) => t.mode === activeTab);
@@ -203,6 +214,17 @@ export default function Home() {
                 </span>
               </button>
 
+              {/* Rules Button */}
+              <button
+                type="button"
+                onClick={() => setShowRulesModal(true)}
+                className="group relative flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-neutral-400 hover:text-white transition-colors duration-300 cursor-pointer"
+              >
+                <div className="absolute inset-0 rounded-full bg-neutral-900/40 border border-neutral-800/60 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                <BookOpen className="h-3.5 w-3.5 text-neutral-500 group-hover:text-amber-400 transition-colors" />
+                <span>Rules</span>
+              </button>
+
               {/* Admin Link */}
               <Link
                 to="/admin"
@@ -255,6 +277,26 @@ export default function Home() {
                 >
                   LEAGUE<br />TOURNAMENTS
                 </h1>
+
+                {/* Hero Rules Button */}
+                <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowRulesModal(true)}
+                    className="group relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-neutral-200 bg-neutral-950/90 border border-orange-500/35 hover:border-orange-500 hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_25px_rgba(255,85,0,0.35)] active:scale-95 cursor-pointer"
+                  >
+                    <BookOpen className="h-3.5 w-3.5 text-orange-400 group-hover:scale-110 transition-transform" />
+                    <span>Rules</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("rules")?.scrollIntoView({ behavior: "smooth" })}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-400 hover:text-orange-400 transition-colors cursor-pointer"
+                  >
+                    <span>Read on page</span>
+                    <span className="text-orange-500/80">↓</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -296,6 +338,9 @@ export default function Home() {
           )}
         </section>
 
+        {/* Tournament Rules Section */}
+        <RulesSection />
+
         {/* Completed Tournaments */}
         <section>
           <div className="mb-8 flex items-center justify-between">
@@ -323,6 +368,15 @@ export default function Home() {
           )}
         </section>
       </div>
+
+      {/* Rules Modal */}
+      <RulesModal
+        isOpen={showRulesModal}
+        onClose={() => setShowRulesModal(false)}
+        onScrollToSection={() => {
+          document.getElementById("rules")?.scrollIntoView({ behavior: "smooth" });
+        }}
+      />
     </div>
   );
 }

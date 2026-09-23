@@ -70,6 +70,12 @@ export default function Navbar() {
             Tournaments
           </Link>
           <Link
+            to="/#rules"
+            className="text-slate-300 hover:text-orange-400 transition-colors py-2 px-3 rounded hover:bg-white/5"
+          >
+            Rules
+          </Link>
+          <Link
             to="/admin"
             className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#ff4e00] to-[#ff8c00] px-4 py-2 font-black text-slate-950 shadow-md shadow-orange-500/10 hover:brightness-110 transition-all duration-200 active:scale-95"
           >
