@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
   BookOpen,
-  Users,
   Trophy,
   Scale,
   ShieldAlert,
@@ -19,7 +18,6 @@ interface RulesModalProps {
 }
 
 export default function RulesModal({ isOpen, onClose, onScrollToSection }: RulesModalProps) {
-  // Prevent background scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -87,124 +85,113 @@ export default function RulesModal({ isOpen, onClose, onScrollToSection }: Rules
             <div className="overflow-y-auto px-6 py-6 space-y-6 text-sm text-neutral-300 leading-relaxed custom-scrollbar">
               {/* Welcome Banner */}
               <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent border border-orange-500/20">
-                <p className="font-semibold text-neutral-200">
+                <p className="font-bold text-white sm:text-base">
                   Welcome to <span className="text-orange-400 font-black">S43 H2H tournament</span>. You're already familiar with some of the rules, but let me briefly review them here.
                 </p>
               </div>
 
               {/* Group System Section */}
               <div className="rounded-2xl p-5 bg-neutral-950/60 border border-neutral-800/80 space-y-3">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-500/15 text-orange-400">
-                    <Users className="h-4 w-4" />
-                  </span>
-                  <h4 className="font-extrabold text-sm uppercase tracking-wider text-white">
-                    Group System & Qualification
-                  </h4>
+                <div className="flex items-center gap-2.5 text-orange-400 font-extrabold uppercase text-xs tracking-wider">
+                  <Trophy className="h-4 w-4" />
+                  <span>Group System & Qualification</span>
                 </div>
-                <p className="text-neutral-400">
+
+                <p>
                   First and foremost, we've decided to work with a group system, for obvious reasons. Players who have an off day can still recover in the following matches and don't have to immediately worry about elimination.
                 </p>
-                <div className="grid sm:grid-cols-2 gap-3 pt-2">
-                  <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800 text-xs">
-                    <span className="font-bold text-white block mb-1">Group Structure</span>
-                    We're working with a group system (group A-B-C...) and the number of groups and players per group will be decided based on the number of registrations.
-                  </div>
-                  <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800 text-xs">
-                    <span className="font-bold text-white block mb-1">Match Format</span>
-                    Each team can play twice (home & away) against an opponent from their group.
-                  </div>
-                </div>
-                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200">
-                  <Trophy className="h-4 w-4 text-amber-400 shrink-0" />
-                  <span>The <strong className="text-white">2 teams with the most points</strong> after the group matches qualify for the quarter-finals.</span>
+
+                <p>
+                  We're working with a group system (group A-B-C...) and the number of groups and players per group will be decided based on the number of registrations.
+                </p>
+
+                <p>
+                  Each team can play twice (home & away) against an opponent from their group.
+                </p>
+
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-500/10 border border-orange-500/25 text-xs text-white font-bold">
+                  <span className="h-2 w-2 rounded-full bg-orange-400 shrink-0" />
+                  <span>The 2 teams with the most points after the group matches qualify for the quarter-finals.</span>
                 </div>
               </div>
 
               {/* Points System Section */}
-              <div className="rounded-2xl p-5 bg-neutral-950/60 border border-neutral-800/80 space-y-4">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400">
-                    <Scale className="h-4 w-4" />
-                  </span>
-                  <h4 className="font-extrabold text-sm uppercase tracking-wider text-white">
-                    Points System & Aggregate
-                  </h4>
+              <div className="rounded-2xl p-5 bg-neutral-950/60 border border-neutral-800/80 space-y-3">
+                <div className="flex items-center gap-2.5 text-amber-400 font-extrabold uppercase text-xs tracking-wider">
+                  <Scale className="h-4 w-4" />
+                  <span>About the points system;</span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="text-xs text-neutral-400 font-medium">Old school vibes:</span>
-                  <span className="px-3 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold text-xs">
-                    3 pts for W
-                  </span>
-                  <span className="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 font-bold text-xs">
-                    1 pt for D
-                  </span>
-                  <span className="px-3 py-1 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 font-bold text-xs">
-                    0 pts for L
-                  </span>
+                <p className="font-medium text-white">
+                  Old school vibes; <span className="text-emerald-400 font-bold">3 points for W</span>, <span className="text-amber-400 font-bold">1 point for D</span>, and <span className="text-red-400 font-bold">0 points for L</span>.
+                </p>
+
+                <p>
+                  There is also no aggregate in group matches; for example:
+                </p>
+
+                {/* Score Box */}
+                <div className="rounded-xl bg-black/60 border border-orange-500/20 p-3 font-mono text-xs sm:text-sm text-neutral-200 space-y-1 w-fit min-w-[220px]">
+                  <div className="flex items-center justify-between gap-6">
+                    <span>Team X - Team Y;</span>
+                    <span className="text-orange-400 font-bold">2-1</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-6">
+                    <span>Team Y - Team X;</span>
+                    <span className="text-orange-400 font-bold">3-0</span>
+                  </div>
                 </div>
 
-                {/* Aggregate clarification */}
-                <div className="p-4 rounded-xl bg-neutral-900/70 border border-orange-500/15 space-y-2 text-xs">
-                  <div className="font-bold text-orange-400">No Aggregate in Group Matches:</div>
-                  <p className="text-neutral-400">
-                    For example:
-                  </p>
-                  <div className="font-mono bg-black/60 p-2.5 rounded-lg border border-neutral-800 text-neutral-300 space-y-1">
-                    <div>Team X - Team Y; 2-1</div>
-                    <div>Team Y - Team X; 3-0</div>
-                  </div>
-                  <p className="text-neutral-400 pt-1">
-                    If you were using the aggregate system, this would be a 4-2 score for Team Y, but we won't be doing that. Each team receives points for its match, but Team Y simply advances to the next matches with a better goal difference.
-                  </p>
-                  <div className="pt-2 text-neutral-300 border-t border-neutral-800/80">
-                    <span className="text-amber-400 font-semibold">Note:</span> Aggregate only occurs if there is an equal number of points and goal difference between two teams after all group matches have been completed.
-                  </div>
+                <p>
+                  If you were using the aggregate system, this would be a 4-2 score for Team Y, but we won't be doing that. Each team receives points for its match, but Team Y simply advances to the next matches with a better goal difference.
+                </p>
+
+                <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-800 text-xs text-neutral-300">
+                  <strong className="text-amber-400">Aggregate rule:</strong> Aggregate only occurs if there is an equal number of points and goal difference between two teams after all group matches have been completed.
                 </div>
               </div>
 
               {/* Fair Play & Anti-Toxic Section */}
               <div className="rounded-2xl p-5 bg-neutral-950/60 border border-neutral-800/80 space-y-3">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-500/15 text-red-400">
-                    <ShieldAlert className="h-4 w-4" />
-                  </span>
-                  <h4 className="font-extrabold text-sm uppercase tracking-wider text-white">
-                    Fair Play & Anti-Toxic Guidelines
-                  </h4>
+                <div className="flex items-center gap-2.5 text-red-400 font-extrabold uppercase text-xs tracking-wider">
+                  <ShieldAlert className="h-4 w-4" />
+                  <span>Fair Play & Anti-Toxic Guidelines</span>
                 </div>
-                <p className="text-xs text-neutral-400">
+
+                <p className="font-medium text-white text-xs">
                   As indicated in previous announcements, we try to avoid toxic play, which means:
                 </p>
-                <div className="grid sm:grid-cols-3 gap-2.5 pt-1">
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs font-semibold text-red-300">
+
+                <div className="grid sm:grid-cols-3 gap-2.5">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs font-semibold text-red-200">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-red-400 font-bold text-[10px]">1</span>
                     <span>No Lob/Kick-off Spam</span>
                   </div>
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs font-semibold text-red-300">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs font-semibold text-red-200">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-red-400 font-bold text-[10px]">2</span>
                     <span>No Cross Spam</span>
                   </div>
-                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs font-semibold text-red-300">
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs font-semibold text-red-200">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-red-400 font-bold text-[10px]">3</span>
                     <span>No Backpassing</span>
                   </div>
                 </div>
-                <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400">
-                  <strong className="text-white">Skill Moves:</strong> There is no limit on other skill moves.
-                </div>
+
+                <p className="text-xs text-neutral-400 italic">
+                  There is no limit on other skill moves.
+                </p>
               </div>
 
-              {/* Match Verification & Spirit */}
+              {/* Verification & Closing */}
               <div className="rounded-2xl p-4 sm:p-5 bg-neutral-950/70 border border-neutral-800 space-y-3">
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <p className="text-xs text-neutral-300">
+                <div className="flex items-center gap-2.5 text-emerald-400">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <p className="text-xs font-semibold text-white">
                     Matches will be verified and results will be pushed to the website.
                   </p>
                 </div>
-                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs font-medium text-orange-200">
+
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs font-bold text-orange-200">
                   <Sparkles className="h-4 w-4 text-orange-400 shrink-0" />
                   <span>Remember, we're organizing this to bring some fun to the game. So try and experience it!</span>
                 </div>
@@ -221,7 +208,7 @@ export default function RulesModal({ isOpen, onClose, onScrollToSection }: Rules
                   }}
                   className="flex items-center gap-1.5 text-neutral-400 hover:text-orange-400 transition-colors cursor-pointer"
                 >
-                  <span>View full section on page</span>
+                  <span>View on page</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </button>
               ) : (
