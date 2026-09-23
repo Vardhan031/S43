@@ -1,18 +1,13 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  X,
-  Trophy,
-  ArrowRight
-} from "lucide-react";
+import { X } from "lucide-react";
 
 interface RulesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onScrollToSection?: () => void;
 }
 
-export default function RulesModal({ isOpen, onClose, onScrollToSection }: RulesModalProps) {
+export default function RulesModal({ isOpen, onClose }: RulesModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -229,23 +224,10 @@ export default function RulesModal({ isOpen, onClose, onScrollToSection }: Rules
 
             {/* Modal Footer */}
             <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-800/80 bg-neutral-950/90 text-xs">
-              {onScrollToSection ? (
-                <button
-                  onClick={() => {
-                    onClose();
-                    onScrollToSection();
-                  }}
-                  className="flex items-center gap-1.5 text-neutral-400 hover:text-orange-400 transition-colors cursor-pointer"
-                >
-                  <span>View on page</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </button>
-              ) : (
-                <span className="text-neutral-500">S43 Official Rules</span>
-              )}
+              <span className="text-neutral-500 font-medium">S43 Official Rules</span>
               <button
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950 font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer"
               >
                 Got It
               </button>

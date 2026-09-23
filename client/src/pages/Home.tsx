@@ -6,7 +6,6 @@ import { Trophy, Settings, Swords, Crosshair, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import InteractiveTournamentCard from "../components/InteractiveTournamentCard";
 import RulesModal from "../components/RulesModal";
-import RulesSection from "../components/RulesSection";
 
 const staticParticles = [
   // Left Zone (0% - 33%)
@@ -103,9 +102,7 @@ export default function Home() {
 
   useEffect(() => {
     if (window.location.hash === "#rules") {
-      setTimeout(() => {
-        document.getElementById("rules")?.scrollIntoView({ behavior: "smooth" });
-      }, 300);
+      setShowRulesModal(true);
     }
   }, []);
 
@@ -170,14 +167,14 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-12" style={{ minHeight: "82vh", display: "flex", flexDirection: "column" }}>
+        <div className="relative z-10 mx-auto max-w-7xl px-3 sm:px-8 lg:px-12" style={{ minHeight: "82vh", display: "flex", flexDirection: "column" }}>
           {/* NAV PILL */}
-          <div className="flex justify-center pt-6 pb-4">
-            <div className="relative flex items-center gap-1.5 rounded-full p-1.5 bg-neutral-950/90 border border-orange-500/25 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(255,106,0,0.1)]">
+          <div className="flex justify-center pt-4 sm:pt-6 pb-4 w-full">
+            <div className="relative flex items-center justify-center gap-1 sm:gap-1.5 rounded-full p-1 sm:p-1.5 bg-neutral-950/90 border border-orange-500/25 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(255,106,0,0.1)] max-w-full">
               {/* VSA Button */}
               <button
                 onClick={() => setActiveTab("VSA")}
-                className={`relative flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition-colors duration-300 cursor-pointer select-none ${
+                className={`relative flex items-center gap-1.5 sm:gap-2 rounded-full px-2.5 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.06em] sm:tracking-[0.14em] transition-colors duration-300 cursor-pointer select-none shrink-0 ${
                   activeTab === "VSA" ? "text-black" : "text-neutral-400 hover:text-white"
                 }`}
               >
@@ -188,8 +185,8 @@ export default function Home() {
                     transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
                   />
                 )}
-                <span className="relative z-10 flex items-center gap-2">
-                  <Crosshair className={`h-3.5 w-3.5 transition-transform duration-300 ${activeTab === "VSA" ? "text-black scale-110" : "text-amber-500/80"}`} />
+                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                  <Crosshair className={`h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 ${activeTab === "VSA" ? "text-black scale-110" : "text-amber-500/80"}`} />
                   <span>VSA</span>
                 </span>
               </button>
@@ -197,7 +194,7 @@ export default function Home() {
               {/* H2H Button */}
               <button
                 onClick={() => setActiveTab("H2H")}
-                className={`relative flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] transition-colors duration-300 cursor-pointer select-none ${
+                className={`relative flex items-center gap-1.5 sm:gap-2 rounded-full px-2.5 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.06em] sm:tracking-[0.14em] transition-colors duration-300 cursor-pointer select-none shrink-0 ${
                   activeTab === "H2H" ? "text-black" : "text-neutral-400 hover:text-white"
                 }`}
               >
@@ -208,8 +205,8 @@ export default function Home() {
                     transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
                   />
                 )}
-                <span className="relative z-10 flex items-center gap-2">
-                  <Swords className={`h-3.5 w-3.5 transition-transform duration-300 ${activeTab === "H2H" ? "text-black scale-110" : "text-amber-500/80"}`} />
+                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                  <Swords className={`h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 ${activeTab === "H2H" ? "text-black scale-110" : "text-amber-500/80"}`} />
                   <span>H2H</span>
                 </span>
               </button>
@@ -218,20 +215,20 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setShowRulesModal(true)}
-                className="group relative flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-neutral-400 hover:text-white transition-colors duration-300 cursor-pointer"
+                className="group relative flex items-center gap-1 sm:gap-1.5 rounded-full px-2.5 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.06em] sm:tracking-[0.14em] text-neutral-400 hover:text-white transition-colors duration-300 cursor-pointer shrink-0"
               >
                 <div className="absolute inset-0 rounded-full bg-neutral-900/40 border border-neutral-800/60 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-                <BookOpen className="h-3.5 w-3.5 text-neutral-500 group-hover:text-amber-400 transition-colors" />
+                <BookOpen className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-neutral-500 group-hover:text-amber-400 transition-colors" />
                 <span>Rules</span>
               </button>
 
               {/* Admin Link */}
               <Link
                 to="/admin"
-                className="group relative flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.14em] text-neutral-400 hover:text-white transition-colors duration-300"
+                className="group relative flex items-center gap-1 sm:gap-1.5 rounded-full px-2.5 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.06em] sm:tracking-[0.14em] text-neutral-400 hover:text-white transition-colors duration-300 shrink-0"
               >
                 <div className="absolute inset-0 rounded-full bg-neutral-900/40 border border-neutral-800/60 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-                <Settings className="h-3.5 w-3.5 text-neutral-500 group-hover:text-amber-400 group-hover:rotate-45 transition-all duration-300" />
+                <Settings className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-neutral-500 group-hover:text-amber-400 group-hover:rotate-45 transition-all duration-300" />
                 <span>Admin</span>
               </Link>
             </div>
@@ -277,26 +274,6 @@ export default function Home() {
                 >
                   LEAGUE<br />TOURNAMENTS
                 </h1>
-
-                {/* Hero Rules Button */}
-                <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowRulesModal(true)}
-                    className="group relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-neutral-200 bg-neutral-950/90 border border-orange-500/35 hover:border-orange-500 hover:text-white transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_25px_rgba(255,85,0,0.35)] active:scale-95 cursor-pointer"
-                  >
-                    <BookOpen className="h-3.5 w-3.5 text-orange-400 group-hover:scale-110 transition-transform" />
-                    <span>Rules</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById("rules")?.scrollIntoView({ behavior: "smooth" })}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-400 hover:text-orange-400 transition-colors cursor-pointer"
-                  >
-                    <span>Read on page</span>
-                    <span className="text-orange-500/80">↓</span>
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -338,9 +315,6 @@ export default function Home() {
           )}
         </section>
 
-        {/* Tournament Rules Section */}
-        <RulesSection />
-
         {/* Completed Tournaments */}
         <section>
           <div className="mb-8 flex items-center justify-between">
@@ -373,9 +347,6 @@ export default function Home() {
       <RulesModal
         isOpen={showRulesModal}
         onClose={() => setShowRulesModal(false)}
-        onScrollToSection={() => {
-          document.getElementById("rules")?.scrollIntoView({ behavior: "smooth" });
-        }}
       />
     </div>
   );
