@@ -338,11 +338,6 @@ export default function Home() {
                 >
                   League<br />Tournaments
                 </h1>
-
-                {/* Subtitle */}
-                <p className="mt-6 text-sm sm:text-base text-neutral-500 font-medium leading-relaxed max-w-[480px]">
-                  The official S43 tournament platform
-                </p>
               </div>
             </div>
           </div>
