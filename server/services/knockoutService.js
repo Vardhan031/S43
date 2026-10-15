@@ -28,25 +28,41 @@ const knockoutService = {
 
     const matchesToInsert = [];
 
-    // Helper to get qualified player by group index and position (1-indexed)
-    const getQualifiedPlayer = (gIndex, pos) => {
-      const group = groupStandings[gIndex];
-      if (!group || !group.standings) return null;
-      const standing = group.standings.find((s) => s.position === pos);
+    // Helper to find group by letter or fallback index
+    const findGroup = (letter, fallbackIdx) => {
+      return (
+        groupStandings.find(
+          (g) =>
+            (g.groupName && g.groupName.toUpperCase().includes(`GROUP ${letter}`)) ||
+            (g.groupName && g.groupName.toUpperCase().trim() === letter)
+        ) || groupStandings[fallbackIdx]
+      );
+    };
+
+    // Helper to get qualified player by group object and position (1-indexed)
+    const getQualifiedPlayer = (groupObj, pos) => {
+      if (!groupObj || !groupObj.standings) return null;
+      const standing = groupObj.standings.find((s) => s.position === pos);
       return standing ? standing.participantId : null;
     };
 
     if (numGroups >= 4) {
       // Starting round: Quarter Finals (QF)
-      // QF1: Group A #1 vs Group B #2
-      // QF2: Group C #1 vs Group D #2
-      // QF3: Group B #1 vs Group A #2
-      // QF4: Group D #1 vs Group C #2
+      // Top 2 Group A vs Top 2 Group C
+      // Top 2 Group B vs Top 2 Group D
+      const groupA = findGroup("A", 0);
+      const groupB = findGroup("B", 1);
+      const groupC = findGroup("C", 2);
+      const groupD = findGroup("D", 3);
+
+      // Bracket structure places same-group qualifiers in opposite halves:
+      // SF1 fed by QF1 (A1 vs C2) & QF2 (B1 vs D2)
+      // SF2 fed by QF3 (C1 vs A2) & QF4 (D1 vs B2)
       matchesToInsert.push(
         {
           tournamentId,
-          participant1: getQualifiedPlayer(0, 1),
-          participant2: getQualifiedPlayer(1, 2),
+          participant1: getQualifiedPlayer(groupA, 1),
+          participant2: getQualifiedPlayer(groupC, 2),
           roundNumber: 1,
           legNumber: 1,
           isKnockout: true,
@@ -55,8 +71,8 @@ const knockoutService = {
         },
         {
           tournamentId,
-          participant1: getQualifiedPlayer(2, 1),
-          participant2: getQualifiedPlayer(3, 2),
+          participant1: getQualifiedPlayer(groupB, 1),
+          participant2: getQualifiedPlayer(groupD, 2),
           roundNumber: 1,
           legNumber: 1,
           isKnockout: true,
@@ -65,8 +81,8 @@ const knockoutService = {
         },
         {
           tournamentId,
-          participant1: getQualifiedPlayer(1, 1),
-          participant2: getQualifiedPlayer(0, 2),
+          participant1: getQualifiedPlayer(groupC, 1),
+          participant2: getQualifiedPlayer(groupA, 2),
           roundNumber: 1,
           legNumber: 1,
           isKnockout: true,
@@ -75,8 +91,8 @@ const knockoutService = {
         },
         {
           tournamentId,
-          participant1: getQualifiedPlayer(3, 1),
-          participant2: getQualifiedPlayer(2, 2),
+          participant1: getQualifiedPlayer(groupD, 1),
+          participant2: getQualifiedPlayer(groupB, 2),
           roundNumber: 1,
           legNumber: 1,
           isKnockout: true,
@@ -124,11 +140,14 @@ const knockoutService = {
       // Starting round: Semi Finals (SF)
       // SF1: Group A #1 vs Group B #2
       // SF2: Group B #1 vs Group A #2
+      const groupA = findGroup("A", 0);
+      const groupB = findGroup("B", 1);
+
       matchesToInsert.push(
         {
           tournamentId,
-          participant1: getQualifiedPlayer(0, 1),
-          participant2: getQualifiedPlayer(1, 2),
+          participant1: getQualifiedPlayer(groupA, 1),
+          participant2: getQualifiedPlayer(groupB, 2),
           roundNumber: 1,
           legNumber: 1,
           isKnockout: true,
@@ -137,8 +156,8 @@ const knockoutService = {
         },
         {
           tournamentId,
-          participant1: getQualifiedPlayer(1, 1),
-          participant2: getQualifiedPlayer(0, 2),
+          participant1: getQualifiedPlayer(groupB, 1),
+          participant2: getQualifiedPlayer(groupA, 2),
           roundNumber: 1,
           legNumber: 1,
           isKnockout: true,
@@ -161,10 +180,11 @@ const knockoutService = {
     } else {
       // 1 Group: Direct Final
       // Final: Group A #1 vs Group A #2
+      const groupA = findGroup("A", 0);
       matchesToInsert.push({
         tournamentId,
-        participant1: getQualifiedPlayer(0, 1),
-        participant2: getQualifiedPlayer(0, 2),
+        participant1: getQualifiedPlayer(groupA, 1),
+        participant2: getQualifiedPlayer(groupA, 2),
         roundNumber: 1,
         legNumber: 1,
         isKnockout: true,

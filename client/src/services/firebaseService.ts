@@ -1082,22 +1082,44 @@ export const knockoutService = {
     const numGroups = groupStandings.length;
     const matchesToInsert: any[] = [];
 
-    const getQualifiedPlayer = (gIndex: number, pos: number) => {
-      const group = groupStandings[gIndex];
+    const findGroup = (letter: string, fallbackIdx: number) => {
+      return (
+        groupStandings.find(
+          (g) =>
+            g.groupName?.toUpperCase().includes(`GROUP ${letter}`) ||
+            g.groupName?.trim().toUpperCase() === letter
+        ) || groupStandings[fallbackIdx]
+      );
+    };
+
+    const getQualifiedPlayer = (group: any, pos: number) => {
       if (!group || !group.standings) return { id: null, name: null };
-      const standing = group.standings.find((s) => s.position === pos);
+      const standing = group.standings.find((s: any) => s.position === pos);
       return standing ? { id: standing.participantId, name: standing.displayName } : { id: null, name: null };
     };
 
     if (numGroups >= 4) {
-      const qf1 = getQualifiedPlayer(0, 1);
-      const qf1_2 = getQualifiedPlayer(1, 2);
-      const qf2 = getQualifiedPlayer(2, 1);
-      const qf2_2 = getQualifiedPlayer(3, 2);
-      const qf3 = getQualifiedPlayer(1, 1);
-      const qf3_2 = getQualifiedPlayer(0, 2);
-      const qf4 = getQualifiedPlayer(3, 1);
-      const qf4_2 = getQualifiedPlayer(2, 2);
+      const groupA = findGroup("A", 0);
+      const groupB = findGroup("B", 1);
+      const groupC = findGroup("C", 2);
+      const groupD = findGroup("D", 3);
+
+      // Top 2 Group A vs Top 2 Group C
+      // Top 2 Group B vs Top 2 Group D
+      // Bracket structure places same-group qualifiers in opposite halves:
+      // SF1 fed by QF1 (A1 vs C2) & QF2 (B1 vs D2)
+      // SF2 fed by QF3 (C1 vs A2) & QF4 (D1 vs B2)
+      const qf1 = getQualifiedPlayer(groupA, 1);
+      const qf1_2 = getQualifiedPlayer(groupC, 2);
+
+      const qf2 = getQualifiedPlayer(groupB, 1);
+      const qf2_2 = getQualifiedPlayer(groupD, 2);
+
+      const qf3 = getQualifiedPlayer(groupC, 1);
+      const qf3_2 = getQualifiedPlayer(groupA, 2);
+
+      const qf4 = getQualifiedPlayer(groupD, 1);
+      const qf4_2 = getQualifiedPlayer(groupB, 2);
 
       matchesToInsert.push(
         { tournamentId, participant1Id: qf1.id, participant1Name: qf1.name, participant2Id: qf1_2.id, participant2Name: qf1_2.name, roundNumber: 1, legNumber: 1, isKnockout: true, knockoutLabel: "QF1", status: "PENDING" },
@@ -1109,10 +1131,13 @@ export const knockoutService = {
         { tournamentId, participant1Id: null, participant1Name: null, participant2Id: null, participant2Name: null, roundNumber: 3, legNumber: 1, isKnockout: true, knockoutLabel: "FINAL", status: "PENDING" }
       );
     } else if (numGroups >= 2) {
-      const sf1 = getQualifiedPlayer(0, 1);
-      const sf1_2 = getQualifiedPlayer(1, 2);
-      const sf2 = getQualifiedPlayer(1, 1);
-      const sf2_2 = getQualifiedPlayer(0, 2);
+      const groupA = findGroup("A", 0);
+      const groupB = findGroup("B", 1);
+
+      const sf1 = getQualifiedPlayer(groupA, 1);
+      const sf1_2 = getQualifiedPlayer(groupB, 2);
+      const sf2 = getQualifiedPlayer(groupB, 1);
+      const sf2_2 = getQualifiedPlayer(groupA, 2);
 
       matchesToInsert.push(
         { tournamentId, participant1Id: sf1.id, participant1Name: sf1.name, participant2Id: sf1_2.id, participant2Name: sf1_2.name, roundNumber: 1, legNumber: 1, isKnockout: true, knockoutLabel: "SF1", status: "PENDING" },
@@ -1120,8 +1145,9 @@ export const knockoutService = {
         { tournamentId, participant1Id: null, participant1Name: null, participant2Id: null, participant2Name: null, roundNumber: 2, legNumber: 1, isKnockout: true, knockoutLabel: "FINAL", status: "PENDING" }
       );
     } else {
-      const f1 = getQualifiedPlayer(0, 1);
-      const f2 = getQualifiedPlayer(0, 2);
+      const groupA = findGroup("A", 0);
+      const f1 = getQualifiedPlayer(groupA, 1);
+      const f2 = getQualifiedPlayer(groupA, 2);
       matchesToInsert.push(
         { tournamentId, participant1Id: f1.id, participant1Name: f1.name, participant2Id: f2.id, participant2Name: f2.name, roundNumber: 1, legNumber: 1, isKnockout: true, knockoutLabel: "FINAL", status: "PENDING" }
       );
