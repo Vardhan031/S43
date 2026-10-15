@@ -24,10 +24,29 @@ export default function KnockoutBracket({
     );
   }
 
+  const orderedRounds = rounds.map((round) => {
+    const matches = [...round.matches];
+    const qf1Idx = matches.findIndex(
+      (m: any) => (m.knockoutLabel || "").toUpperCase() === "QF1"
+    );
+    const qf3Idx = matches.findIndex(
+      (m: any) => (m.knockoutLabel || "").toUpperCase() === "QF3"
+    );
+    if (qf1Idx !== -1 && qf3Idx !== -1) {
+      const temp = matches[qf1Idx];
+      matches[qf1Idx] = matches[qf3Idx];
+      matches[qf3Idx] = temp;
+    }
+    return {
+      ...round,
+      matches,
+    };
+  });
+
   return (
     <div className="overflow-x-auto no-scrollbar pb-6">
       <div className="flex min-w-max items-stretch gap-10 px-4 py-4">
-        {rounds.map(
+        {orderedRounds.map(
           (round, roundIndex) => {
             const spacingClass =
               roundIndex === 0
